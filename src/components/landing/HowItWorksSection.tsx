@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Send, Brain, TrendingUp } from "lucide-react";
+import { Send, Sparkles, TrendingUp } from "lucide-react";
 
 const steps = [
   {
@@ -9,16 +9,16 @@ const steps = [
     description: "Compartilhe seus investimentos de forma segura e prática",
   },
   {
-    icon: Brain,
+    icon: Sparkles,
     number: "2",
-    title: "Nossa IA + especialistas analisam em tempo real",
-    description: "Tecnologia avançada combinada com expertise humana",
+    title: "Nossa IA + especialistas analisam sua carteira",
+    description: "Análise detalhada entregue em até 24 horas",
   },
   {
     icon: TrendingUp,
     number: "3",
-    title: "Receba insights e recomendações personalizadas",
-    description: "Decisões informadas baseadas na sua realidade",
+    title: "Receba sua análise completa",
+    description: "Decisões informadas com recomendações personalizadas em até 24 horas",
   },
 ];
 
