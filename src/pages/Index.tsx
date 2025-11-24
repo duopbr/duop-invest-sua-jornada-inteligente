@@ -1,12 +1,34 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { HeroSection } from "@/components/landing/HeroSection";
+import { ProblemSection } from "@/components/landing/ProblemSection";
+import { SolutionSection } from "@/components/landing/SolutionSection";
+import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
+import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { LeadCaptureForm } from "@/components/landing/LeadCaptureForm";
+import { AuthoritySection } from "@/components/landing/AuthoritySection";
+import { FAQSection } from "@/components/landing/FAQSection";
+import { FinalCTA } from "@/components/landing/FinalCTA";
+import { Footer } from "@/components/landing/Footer";
 
 const Index = () => {
+  const scrollToForm = () => {
+    const formElement = document.getElementById("form");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen">
+      <HeroSection onCTAClick={scrollToForm} />
+      <ProblemSection />
+      <SolutionSection />
+      <HowItWorksSection />
+      <TestimonialsSection />
+      <LeadCaptureForm />
+      <AuthoritySection />
+      <FAQSection />
+      <FinalCTA onCTAClick={scrollToForm} />
+      <Footer />
     </div>
   );
 };
