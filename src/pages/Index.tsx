@@ -1,3 +1,4 @@
+import { Header } from "@/components/landing/Header";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ProblemSection } from "@/components/landing/ProblemSection";
 import { SolutionSection } from "@/components/landing/SolutionSection";
@@ -19,6 +20,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
+      <Header onCTAClick={scrollToForm} />
       <HeroSection onCTAClick={scrollToForm} />
       <ProblemSection />
       <SolutionSection />
