@@ -21,7 +21,7 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
               Tome Decisões de Investimento com Confiança
             </h1>
             <p className="text-xl lg:text-2xl text-muted-foreground mb-8 leading-relaxed">
-              Consultoria de investimentos 24/7 via WhatsApp. Análises feitas por ex-gestores + poder da IA.
+              Consultoria de investimentos via WhatsApp. Análises detalhadas feitas por engenheiros ex-gestores com IA em até 24h.
             </p>
             <Button
               size="lg"

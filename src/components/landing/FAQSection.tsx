@@ -8,6 +8,11 @@ import {
 
 const faqs = [
   {
+    question: "Quanto tempo leva para receber a análise?",
+    answer:
+      "Seu relatório completo é entregue em até 24 horas. Priorizamos qualidade sobre velocidade - cada análise é revisada por nossos especialistas.",
+  },
+  {
     question: "Como funcionam as 5 interações grátis?",
     answer:
       "Você pode fazer 5 perguntas ou análises sem compromisso. Depois disso, oferecemos planos a partir de R$ 54,90/mês.",

@@ -73,7 +73,7 @@ export const TestimonialsSection = () => {
           <Card className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground border-none">
             <Award className="w-6 h-6" />
             <p className="font-semibold text-lg">
-              Fundada por ex-gestores da XP e BTG com mestrado em Economia
+              Fundada por engenheiros ex-gestores com mestrado e doutorado em Economia (FGV)
             </p>
           </Card>
         </motion.div>
