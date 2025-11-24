@@ -58,7 +58,7 @@ export const AuthoritySection = () => {
                   <img
                     src={founder.image}
                     alt={`Foto de ${founder.name}, ${founder.credentials}`}
-                    className="w-32 h-32 md:w-36 md:h-36 rounded-full object-cover border-2 border-accent/30 shadow-md hover:scale-105 transition-transform"
+                    className="w-32 h-32 md:w-36 md:h-36 rounded-full object-contain bg-muted/20 border-2 border-accent/30 shadow-md hover:scale-105 transition-transform"
                   />
                 </div>
                 <h3 className="text-xl font-bold text-card-foreground mb-2">
