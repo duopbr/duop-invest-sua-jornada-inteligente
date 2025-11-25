@@ -35,34 +35,35 @@ export interface TrackingEventParams {
   customData?: TrackingCustomData;
 }
 
-// SHA256 hashing function for PII (Meta CAPI requirement)
-async function sha256(text: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
+// Prepare user data for Meta CAPI (normalized, not hashed - server handles hashing)
+function prepareUserData(userData: TrackingUserData): Record<string, string> {
+  const prepared: Record<string, string> = {
+    country: 'br', // Always BR for this project
+  };
 
-// Normalize and hash email
-async function hashEmail(email: string): Promise<string> {
-  const normalized = email.toLowerCase().trim();
-  return sha256(normalized);
-}
+  if (userData.email) {
+    prepared.em = userData.email.toLowerCase().trim();
+  }
 
-// Normalize and hash phone (Brazilian E.164 format)
-async function hashPhone(phone: string): Promise<string> {
-  // Remove all non-numeric characters
-  const cleaned = phone.replace(/\D/g, '');
-  // Add +55 if not present
-  const normalized = cleaned.startsWith('55') ? `+${cleaned}` : `+55${cleaned}`;
-  return sha256(normalized);
-}
+  if (userData.phone) {
+    // Normalize to E.164 BR format
+    const cleaned = userData.phone.replace(/\D/g, '');
+    prepared.ph = cleaned.startsWith('55') ? `+${cleaned}` : `+55${cleaned}`;
+  }
 
-// Normalize and hash name
-async function hashName(name: string): Promise<string> {
-  const normalized = name.toLowerCase().trim();
-  return sha256(normalized);
+  if (userData.firstName) {
+    prepared.fn = userData.firstName.toLowerCase().trim();
+  }
+
+  if (userData.lastName) {
+    prepared.ln = userData.lastName.toLowerCase().trim();
+  }
+
+  if (userData.externalId) {
+    prepared.external_id = userData.externalId;
+  }
+
+  return prepared;
 }
 
 // Get UTM parameters from URL
@@ -98,40 +99,12 @@ function getContextData(): Record<string, any> {
   };
 }
 
-// Hash user data for Meta CAPI
-async function hashUserData(userData: TrackingUserData): Promise<Record<string, string[]>> {
-  const hashed: Record<string, string[]> = {
-    country: ['br'], // Always BR for this project
-  };
-
-  if (userData.email) {
-    hashed.em = [await hashEmail(userData.email)];
-  }
-
-  if (userData.phone) {
-    hashed.ph = [await hashPhone(userData.phone)];
-  }
-
-  if (userData.firstName) {
-    hashed.fn = [await hashName(userData.firstName)];
-  }
-
-  if (userData.lastName) {
-    hashed.ln = [await hashName(userData.lastName)];
-  }
-
-  if (userData.externalId) {
-    hashed.external_id = [userData.externalId];
-  }
-
-  return hashed;
-}
 
 // Main tracking function
-export async function trackEvent(
+export function trackEvent(
   eventName: string,
   params: TrackingEventParams = {}
-): Promise<void> {
+): void {
   if (typeof window === 'undefined') return;
 
   try {
@@ -153,14 +126,9 @@ export async function trackEvent(
       eventData.eventValue = params.eventValue;
     }
 
-    // Hash user data for Meta CAPI if provided
+    // Prepare user data for Meta CAPI if provided (normalized, not hashed)
     if (params.userData) {
-      const hashedUserData = await hashUserData(params.userData);
-      eventData.user_data = hashedUserData;
-      
-      // Also include original field names for GTM variables (non-hashed for internal tracking)
-      eventData.user_email = params.userData.email || '';
-      eventData.user_phone = params.userData.phone || '';
+      eventData.user_data = prepareUserData(params.userData);
     }
 
     // Add custom data
@@ -180,9 +148,9 @@ export async function trackEvent(
 // Convenience functions for common events
 
 export function trackPageView(): void {
-  trackEvent('page_view', {
+  trackEvent('PageView', {
     eventCategory: 'engagement',
-    eventAction: 'page_view',
+    eventAction: 'PageView',
     eventLabel: window.location.pathname,
   });
 }
@@ -243,13 +211,13 @@ export function trackFormValidationError(errorFields: string[]): void {
   });
 }
 
-export async function trackLeadCaptured(
+export function trackLeadCaptured(
   userData: TrackingUserData,
   customData: TrackingCustomData = {}
-): Promise<void> {
-  await trackEvent('lead_captured', {
+): void {
+  trackEvent('Lead', {
     eventCategory: 'conversion',
-    eventAction: 'lead_submit',
+    eventAction: 'Lead',
     eventLabel: 'landing_page_form',
     eventValue: 1,
     userData,
