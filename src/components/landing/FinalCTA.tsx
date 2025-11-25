@@ -22,14 +22,14 @@ export const FinalCTA = ({ onCTAClick }: FinalCTAProps) => {
             Pare de Tomar Decisões no Escuro
           </h2>
           <p className="text-xl lg:text-2xl mb-8 opacity-90">
-            Comece suas 5 análises gratuitas agora
+            Comece suas 5 análises gratuitas agora. Sem cartão, sem compromisso.
           </p>
           <Button
             size="lg"
             onClick={onCTAClick}
             className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-10 py-7 shadow-accent transition-all hover:scale-105"
           >
-            Quero Minha Análise Gratuita
+            Começar Gratuitamente
           </Button>
         </motion.div>
       </div>

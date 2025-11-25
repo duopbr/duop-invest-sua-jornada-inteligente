@@ -8,6 +8,11 @@ import {
 
 const faqs = [
   {
+    question: "Por que vocês não vendem produtos de investimento?",
+    answer:
+      "Simples: nosso negócio é a assinatura mensal, não comissão de vendas. Quanto melhor você investe (de verdade), mais tempo você fica conosco. Não temos conflito de interesse. Só queremos que você invista bem.",
+  },
+  {
     question: "Quanto tempo leva para receber a análise?",
     answer:
       "Seu relatório completo é entregue em até 24 horas. Priorizamos qualidade sobre velocidade - cada análise é revisada por nossos especialistas.",
