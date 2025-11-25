@@ -184,14 +184,14 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
                 className="bg-gradient-to-r from-[#E1306C] to-[#F77737] hover:opacity-90 text-white"
               >
                 <a
-                  href="https://instagram.com/duop"
+                  href="https://www.instagram.com/duop2opiniao/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2"
-                  onClick={() => trackOutboundClick('https://instagram.com/duop', 'instagram')}
+                  onClick={() => trackOutboundClick('https://www.instagram.com/duop2opiniao/', 'instagram')}
                 >
                   <Instagram className="w-5 h-5" />
-                  Seguir @duop
+                  Seguir @duop2opiniao
                 </a>
               </Button>
               

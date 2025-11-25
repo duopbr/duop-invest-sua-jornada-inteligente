@@ -1,5 +1,6 @@
-import { Instagram, Linkedin } from "lucide-react";
+import { Instagram, Linkedin, Youtube } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { trackOutboundClick } from "@/lib/tracking";
 
 export const Footer = () => {
   return (
@@ -27,11 +28,24 @@ export const Footer = () => {
 
           <div className="flex gap-4">
             <a
-              href="#"
+              href="https://www.instagram.com/duop2opiniao/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-primary-foreground/10 hover:bg-accent flex items-center justify-center transition-all hover:scale-110"
               aria-label="Instagram"
+              onClick={() => trackOutboundClick('https://www.instagram.com/duop2opiniao/', 'instagram')}
             >
               <Instagram className="w-5 h-5" />
+            </a>
+            <a
+              href="https://www.youtube.com/@duop-company/videos"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-primary-foreground/10 hover:bg-accent flex items-center justify-center transition-all hover:scale-110"
+              aria-label="YouTube"
+              onClick={() => trackOutboundClick('https://www.youtube.com/@duop-company/videos', 'youtube')}
+            >
+              <Youtube className="w-5 h-5" />
             </a>
             <a
               href="#"

@@ -139,7 +139,10 @@ export function trackEvent(
     // Push to dataLayer
     window.dataLayer.push(eventData);
 
-    console.log('📊 Event tracked:', eventName, eventData);
+    // Log only in development
+    if (import.meta.env.DEV) {
+      console.log('📊 Event tracked:', eventName, eventData);
+    }
   } catch (error) {
     console.error('Error tracking event:', error);
   }
