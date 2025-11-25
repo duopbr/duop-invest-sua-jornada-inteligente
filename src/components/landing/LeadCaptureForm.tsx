@@ -62,7 +62,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
       const urlParams = new URLSearchParams(window.location.search);
       
       const { error } = await supabase
-        .from('leads')
+        .from('B2C_Leads_LP')
         .insert({
           name: data.name.trim(),
           surname: data.surname.trim(),
