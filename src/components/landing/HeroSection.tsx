@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-image.jpg";
+import { trackCTAClick } from "@/lib/tracking";
 
 interface HeroSectionProps {
   onCTAClick: () => void;
@@ -25,7 +26,10 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
             </p>
             <Button
               size="lg"
-              onClick={onCTAClick}
+              onClick={() => {
+                trackCTAClick('hero');
+                onCTAClick();
+              }}
               className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-8 py-6 shadow-accent transition-all hover:scale-105"
             >
               Analisar Minha Carteira Grátis

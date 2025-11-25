@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { trackCTAClick } from "@/lib/tracking";
 
 interface FinalCTAProps {
   onCTAClick: () => void;
@@ -26,7 +27,10 @@ export const FinalCTA = ({ onCTAClick }: FinalCTAProps) => {
           </p>
           <Button
             size="lg"
-            onClick={onCTAClick}
+            onClick={() => {
+              trackCTAClick('final_cta');
+              onCTAClick();
+            }}
             className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-10 py-7 shadow-accent transition-all hover:scale-105"
           >
             Começar Gratuitamente

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
+import { trackCTAClick } from "@/lib/tracking";
 
 interface HeaderProps {
   onCTAClick: () => void;
@@ -39,7 +40,10 @@ export const Header = ({ onCTAClick }: HeaderProps) => {
 
           {/* CTA Button */}
           <Button
-            onClick={onCTAClick}
+            onClick={() => {
+              trackCTAClick('header');
+              onCTAClick();
+            }}
             size="lg"
             className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-md hover:shadow-lg transition-all"
           >
