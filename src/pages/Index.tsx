@@ -1,5 +1,6 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Header } from "@/components/landing/Header";
+import { trackPageView } from "@/lib/tracking";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ProblemSection } from "@/components/landing/ProblemSection";
 import { SolutionSection } from "@/components/landing/SolutionSection";
@@ -13,6 +14,11 @@ import { Footer } from "@/components/landing/Footer";
 
 const Index = () => {
   const formRef = useRef<LeadCaptureFormRef>(null);
+
+  // Track page view on mount
+  useEffect(() => {
+    trackPageView();
+  }, []);
 
   const scrollToForm = () => {
     const formElement = document.getElementById("form");

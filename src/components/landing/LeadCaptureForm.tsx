@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,8 +11,15 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Gift, Lock, Loader2, CheckCircle2, Instagram } from "lucide-react";
 import { toast } from "sonner";
-import { forwardRef, useImperativeHandle, useState as useComponentState } from "react";
 import { supabase } from "@/lib/supabase";
+import {
+  trackFormView,
+  trackFormStart,
+  trackFormSubmitAttempt,
+  trackFormValidationError,
+  trackLeadCaptured,
+  trackOutboundClick,
+} from "@/lib/tracking";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, { message: "Por favor, insira seu nome" }),
@@ -34,6 +41,8 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [shouldPulse, setShouldPulse] = useState(false);
+  const [formStarted, setFormStarted] = useState(false);
+  const formSectionRef = useRef<HTMLElement>(null);
 
   useImperativeHandle(ref, () => ({
     triggerPulse: () => {
@@ -41,6 +50,35 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
       setTimeout(() => setShouldPulse(false), 2000);
     },
   }));
+
+  // Track form view when it becomes visible
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            trackFormView('lead_capture_form');
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    if (formSectionRef.current) {
+      observer.observe(formSectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Track form start on first field interaction
+  const handleFormStart = (fieldName: string) => {
+    if (!formStarted) {
+      setFormStarted(true);
+      trackFormStart(fieldName);
+    }
+  };
 
   const {
     register,
@@ -58,10 +96,13 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
     setIsSubmitting(true);
     
     try {
+      // Track form submit attempt
+      trackFormSubmitAttempt('lead_capture_form');
+      
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
-      const { error } = await supabase
+      const { data: insertedData, error } = await supabase
         .from('B2C_Leads_LP')
         .insert({
           name: data.name.trim(),
@@ -73,17 +114,43 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           utm_source: urlParams.get('utm_source'),
           utm_medium: urlParams.get('utm_medium'),
           utm_campaign: urlParams.get('utm_campaign'),
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
       setIsSuccess(true);
+
+      // Track successful lead capture with hashed data for Meta CAPI
+      await trackLeadCaptured(
+        {
+          email: data.email.trim().toLowerCase(),
+          phone: data.phone,
+          firstName: data.name.trim(),
+          lastName: data.surname.trim(),
+          externalId: insertedData?.id || '',
+        },
+        {
+          has_investment: data.hasInvestment === "yes",
+          form_id: 'lead_capture_form',
+        }
+      );
+      
       toast.success("Recebido! Você receberá um WhatsApp em breve.");
     } catch (error) {
       console.error("Error submitting lead:", error);
       toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Track validation errors
+  const handleFormError = (formErrors: any) => {
+    const errorFields = Object.keys(formErrors);
+    if (errorFields.length > 0) {
+      trackFormValidationError(errorFields);
     }
   };
 
@@ -121,6 +188,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2"
+                  onClick={() => trackOutboundClick('https://instagram.com/duop', 'instagram')}
                 >
                   <Instagram className="w-5 h-5" />
                   Seguir @duop
@@ -141,6 +209,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
                     href="https://wa.me/5511999999999"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackOutboundClick('https://wa.me/5511999999999', 'whatsapp')}
                   >
                     Abrir WhatsApp
                   </a>
@@ -154,7 +223,11 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
   }
 
   return (
-    <section id="form" className="py-20 bg-muted/50">
+    <section
+      id="form"
+      ref={formSectionRef}
+      className="py-20 bg-muted/50"
+    >
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -192,7 +265,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit, handleFormError)} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome *</Label>
@@ -200,6 +273,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
                     id="name"
                     placeholder="Seu nome"
                     {...register("name")}
+                    onFocus={() => handleFormStart('name')}
                     className={errors.name ? "border-destructive" : ""}
                   />
                   {errors.name && (
