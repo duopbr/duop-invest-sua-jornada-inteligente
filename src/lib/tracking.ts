@@ -103,7 +103,7 @@ function getContextData(): Record<string, any> {
 // Main tracking function
 export function trackEvent(
   eventName: string,
-  params: TrackingEventParams = {}
+  params: TrackingEventParams & Record<string, any> = {}
 ): void {
   if (typeof window === 'undefined') return;
 
@@ -111,29 +111,28 @@ export function trackEvent(
     const utmParams = getUTMParams();
     const contextData = getContextData();
 
+    // Extract known params
+    const { eventCategory, eventAction, eventLabel, eventValue, userData, customData, ...extraParams } = params;
+
     // Prepare base event data
     const eventData: any = {
       event: eventName,
-      eventCategory: params.eventCategory || 'general',
-      eventAction: params.eventAction || eventName,
-      eventLabel: params.eventLabel || '',
+      eventCategory: eventCategory || 'general',
+      eventAction: eventAction || eventName,
+      eventLabel: eventLabel || '',
       ...utmParams,
       ...contextData,
+      ...extraParams, // Include any extra params passed (like em, ph, fn, ln)
     };
 
     // Add event value if provided
-    if (params.eventValue !== undefined) {
-      eventData.eventValue = params.eventValue;
-    }
-
-    // Prepare user data for Meta CAPI if provided (normalized, not hashed)
-    if (params.userData) {
-      eventData.user_data = prepareUserData(params.userData);
+    if (eventValue !== undefined) {
+      eventData.eventValue = eventValue;
     }
 
     // Add custom data
-    if (params.customData) {
-      eventData.custom_data = params.customData;
+    if (customData) {
+      eventData.custom_data = customData;
     }
 
     // Push to dataLayer
@@ -218,12 +217,16 @@ export function trackLeadCaptured(
   userData: TrackingUserData,
   customData: TrackingCustomData = {}
 ): void {
+  // Prepare user data directly in the event (not nested)
+  const preparedUserData = prepareUserData(userData);
+  
   trackEvent('Lead', {
     eventCategory: 'conversion',
     eventAction: 'Lead',
     eventLabel: 'landing_page_form',
     eventValue: 1,
-    userData,
+    // Spread user data directly at root level for Meta CAPI
+    ...preparedUserData,
     customData: {
       content_name: 'lead_form',
       currency: 'BRL',
