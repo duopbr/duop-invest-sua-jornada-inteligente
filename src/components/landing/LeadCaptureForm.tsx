@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Gift, Lock, Loader2, CheckCircle2 } from "lucide-react";
+import { Gift, Lock, Loader2, CheckCircle2, Instagram } from "lucide-react";
 import { toast } from "sonner";
+import { forwardRef, useImperativeHandle, useState as useComponentState } from "react";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, { message: "Por favor, insira seu nome" }),
@@ -24,9 +25,21 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export const LeadCaptureForm = () => {
+export interface LeadCaptureFormRef {
+  triggerPulse: () => void;
+}
+
+export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [shouldPulse, setShouldPulse] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    triggerPulse: () => {
+      setShouldPulse(true);
+      setTimeout(() => setShouldPulse(false), 2000);
+    },
+  }));
 
   const {
     register,
@@ -66,19 +79,67 @@ export const LeadCaptureForm = () => {
 
   if (isSuccess) {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="text-center py-16"
-      >
-        <CheckCircle2 className="w-20 h-20 text-success mx-auto mb-6" />
-        <h3 className="text-3xl font-bold text-primary mb-4">
-          ✅ Recebemos suas informações!
-        </h3>
-        <p className="text-xl text-muted-foreground max-w-md mx-auto">
-          Em breve você receberá um WhatsApp para começar suas 5 análises gratuitas.
-        </p>
-      </motion.div>
+      <section id="form" className="py-20 bg-muted/50">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-16 max-w-2xl mx-auto"
+          >
+            <CheckCircle2 className="w-20 h-20 text-success mx-auto mb-6" />
+            <h3 className="text-3xl font-bold text-primary mb-4">
+              ✅ Tudo Certo!
+            </h3>
+            <p className="text-xl text-muted-foreground mb-3">
+              Recebemos suas informações.
+            </p>
+            <p className="text-lg text-muted-foreground mb-8">
+              Você receberá um WhatsApp em até 2 horas para começar suas 5 análises gratuitas.
+            </p>
+            
+            <div className="space-y-4 mt-8">
+              <p className="text-muted-foreground font-semibold">
+                Enquanto isso, que tal nos seguir no Instagram?
+              </p>
+              <Button
+                size="lg"
+                asChild
+                className="bg-gradient-to-r from-[#E1306C] to-[#F77737] hover:opacity-90 text-white"
+              >
+                <a
+                  href="https://instagram.com/duop"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2"
+                >
+                  <Instagram className="w-5 h-5" />
+                  Seguir @duop
+                </a>
+              </Button>
+              
+              <div className="mt-8 pt-8 border-t border-border">
+                <p className="text-muted-foreground mb-4">
+                  Já recebeu nosso WhatsApp?
+                </p>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  asChild
+                  className="border-accent text-accent hover:bg-accent/10"
+                >
+                  <a
+                    href="https://wa.me/5511999999999"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Abrir WhatsApp
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
     );
   }
 
@@ -92,7 +153,22 @@ export const LeadCaptureForm = () => {
           transition={{ duration: 0.6 }}
           className="max-w-2xl mx-auto"
         >
-          <Card className="p-8 lg:p-12 shadow-elevated border-2 border-accent/20 bg-card">
+          {/* Urgency Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-center mb-4"
+          >
+            <span className="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm text-accent px-4 py-2 rounded-full text-sm font-semibold border border-accent/20 animate-fade-in">
+              🔥 347 pessoas testaram essa semana
+            </span>
+          </motion.div>
+
+          <Card className={`p-8 lg:p-12 shadow-elevated border-2 bg-card transition-all duration-500 ${
+            shouldPulse ? "border-accent animate-pulse-glow" : "border-accent/20"
+          }`}>
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full mb-4">
                 <Gift className="w-5 h-5" />
@@ -145,7 +221,7 @@ export const LeadCaptureForm = () => {
                   className={errors.email ? "border-destructive" : ""}
                 />
                 {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email.message}</p>
+                  <p className="text-sm text-destructive">Ops! {errors.email.message} 😊</p>
                 )}
               </div>
 
@@ -166,7 +242,7 @@ export const LeadCaptureForm = () => {
                   )}
                 </InputMask>
                 {errors.phone && (
-                  <p className="text-sm text-destructive">{errors.phone.message}</p>
+                  <p className="text-sm text-destructive">Ops! {errors.phone.message} 😊</p>
                 )}
               </div>
 
@@ -191,7 +267,7 @@ export const LeadCaptureForm = () => {
                   </div>
                 </RadioGroup>
                 {errors.hasInvestment && (
-                  <p className="text-sm text-destructive">{errors.hasInvestment.message}</p>
+                  <p className="text-sm text-destructive">Ops! {errors.hasInvestment.message} 😊</p>
                 )}
               </div>
 
@@ -226,4 +302,6 @@ export const LeadCaptureForm = () => {
       </div>
     </section>
   );
-};
+});
+
+LeadCaptureForm.displayName = "LeadCaptureForm";

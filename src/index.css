@@ -49,6 +49,7 @@ All colors MUST be HSL.
     --shadow-md: 0 8px 24px -4px hsl(215 25% 27% / 0.12);
     --shadow-lg: 0 16px 48px -8px hsl(215 25% 27% / 0.16);
     --shadow-accent: 0 8px 32px -4px hsl(188 94% 43% / 0.25);
+    --shadow-elevated: 0 20px 60px -12px hsl(215 25% 27% / 0.2);
 
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
