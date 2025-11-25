@@ -122,8 +122,8 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
 
       setIsSuccess(true);
 
-      // Track successful lead capture with hashed data for Meta CAPI
-      await trackLeadCaptured(
+      // Track successful lead capture with normalized data for Meta CAPI
+      trackLeadCaptured(
         {
           email: data.email.trim().toLowerCase(),
           phone: data.phone,
