@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Gift, Lock, Loader2, CheckCircle2, Instagram } from "lucide-react";
 import { toast } from "sonner";
 import { forwardRef, useImperativeHandle, useState as useComponentState } from "react";
+import { supabase } from "@/lib/supabase";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, { message: "Por favor, insira seu nome" }),
@@ -57,20 +58,29 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
     setIsSubmitting(true);
     
     try {
-      // Simulating API call - replace with actual endpoint
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      // Capturar UTM params da URL
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      const { error } = await supabase
+        .from('leads')
+        .insert({
+          name: data.name.trim(),
+          surname: data.surname.trim(),
+          email: data.email.trim().toLowerCase(),
+          phone: data.phone,
+          has_investment: data.hasInvestment === "yes",
+          source: 'landing_page',
+          utm_source: urlParams.get('utm_source'),
+          utm_medium: urlParams.get('utm_medium'),
+          utm_campaign: urlParams.get('utm_campaign'),
+        });
 
-      if (!response.ok) throw new Error("Falha ao enviar");
+      if (error) throw error;
 
       setIsSuccess(true);
-      toast.success("Dados enviados com sucesso!");
+      toast.success("Recebido! Você receberá um WhatsApp em breve.");
     } catch (error) {
+      console.error("Error submitting lead:", error);
       toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.");
     } finally {
       setIsSubmitting(false);
