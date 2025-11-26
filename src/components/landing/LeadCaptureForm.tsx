@@ -119,7 +119,14 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw new Error(error.message || "Erro ao salvar dados");
+      }
+
+      if (!insertedData) {
+        throw new Error("Nenhum dado foi retornado após inserção");
+      }
 
       // Track successful lead capture with normalized data for Meta CAPI
       trackLeadCaptured(
@@ -128,7 +135,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           phone: data.phone,
           firstName: data.name.trim(),
           lastName: data.surname.trim(),
-          externalId: insertedData?.id || '',
+          externalId: insertedData.id,
         },
         {
           has_investment: data.hasInvestment === "yes",
@@ -136,12 +143,21 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         }
       );
       
-      // Redirect to thank you page
-      navigate('/obrigado');
+      // Dismiss all toasts before navigating
+      toast.dismiss();
+      
+      // Small delay to ensure toasts are cleared before navigation
+      setTimeout(() => {
+        navigate('/obrigado');
+      }, 100);
     } catch (error) {
       console.error("Error submitting lead:", error);
-      toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.");
-    } finally {
+      // Dismiss any existing toasts first
+      toast.dismiss();
+      // Show error toast
+      toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.", {
+        duration: 5000,
+      });
       setIsSubmitting(false);
     }
   };
