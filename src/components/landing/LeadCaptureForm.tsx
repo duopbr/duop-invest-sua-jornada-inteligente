@@ -4,14 +4,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
 import InputMask from "react-input-mask";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Gift, Lock, Loader2, CheckCircle2, Instagram } from "lucide-react";
+import { Gift, Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import {
   trackFormView,
   trackFormStart,
@@ -38,8 +39,8 @@ export interface LeadCaptureFormRef {
 }
 
 export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [shouldPulse, setShouldPulse] = useState(false);
   const [formStarted, setFormStarted] = useState(false);
   const formSectionRef = useRef<HTMLElement>(null);
@@ -120,8 +121,6 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
 
       if (error) throw error;
 
-      setIsSuccess(true);
-
       // Track successful lead capture with normalized data for Meta CAPI
       trackLeadCaptured(
         {
@@ -137,7 +136,8 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         }
       );
       
-      toast.success("Recebido! Você receberá um WhatsApp em breve.");
+      // Redirect to thank you page
+      navigate('/obrigado');
     } catch (error) {
       console.error("Error submitting lead:", error);
       toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.");
@@ -153,74 +153,6 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
       trackFormValidationError(errorFields);
     }
   };
-
-  if (isSuccess) {
-    return (
-      <section id="form" className="py-20 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-16 max-w-2xl mx-auto"
-          >
-            <CheckCircle2 className="w-20 h-20 text-success mx-auto mb-6" />
-            <h3 className="text-3xl font-bold text-primary mb-4">
-              ✅ Tudo Certo!
-            </h3>
-            <p className="text-xl text-muted-foreground mb-3">
-              Recebemos suas informações.
-            </p>
-            <p className="text-lg text-muted-foreground mb-8">
-              Você receberá um WhatsApp em até 2 horas para começar suas 5 análises gratuitas.
-            </p>
-            
-            <div className="space-y-4 mt-8">
-              <p className="text-muted-foreground font-semibold">
-                Enquanto isso, que tal nos seguir no Instagram?
-              </p>
-              <Button
-                size="lg"
-                asChild
-                className="bg-gradient-to-r from-[#E1306C] to-[#F77737] hover:opacity-90 text-white"
-              >
-                <a
-                  href="https://www.instagram.com/duop2opiniao/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2"
-                  onClick={() => trackOutboundClick('https://www.instagram.com/duop2opiniao/', 'instagram')}
-                >
-                  <Instagram className="w-5 h-5" />
-                  Seguir @duop2opiniao
-                </a>
-              </Button>
-              
-              <div className="mt-8 pt-8 border-t border-border">
-                <p className="text-muted-foreground mb-4">
-                  Já recebeu nosso WhatsApp?
-                </p>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  asChild
-                  className="border-accent text-accent hover:bg-accent/10"
-                >
-                  <a
-                    href="https://wa.me/5511999999999"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => trackOutboundClick('https://wa.me/5511999999999', 'whatsapp')}
-                  >
-                    Abrir WhatsApp
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section
