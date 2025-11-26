@@ -103,7 +103,8 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
-      const { data: insertedData, error } = await supabase
+      // Fire and forget: insert without reading back (RLS blocks SELECT for anon)
+      const { error } = await supabase
         .from('B2C_Leads_LP')
         .insert({
           name: data.name.trim(),
@@ -115,9 +116,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           utm_source: urlParams.get('utm_source'),
           utm_medium: urlParams.get('utm_medium'),
           utm_campaign: urlParams.get('utm_campaign'),
-        })
-        .select()
-        .single();
+        });
 
       if (error) {
         console.error("Supabase error details:", {
@@ -126,21 +125,21 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           hint: error.hint,
           code: error.code,
         });
+        // Show detailed error to user in dev
+        const errorMsg = `Erro: ${error.message} (código: ${error.code})`;
+        toast.error(errorMsg);
         throw new Error(error.message || "Erro ao salvar dados");
       }
 
-      if (!insertedData) {
-        throw new Error("Nenhum dado foi retornado após inserção");
-      }
-
       // Track successful lead capture with normalized data for Meta CAPI
+      // Note: no externalId since we can't read back the inserted row
       trackLeadCaptured(
         {
           email: data.email.trim().toLowerCase(),
           phone: data.phone,
           firstName: data.name.trim(),
           lastName: data.surname.trim(),
-          externalId: insertedData.id,
+          externalId: '', // Empty since we can't read back due to RLS
         },
         {
           has_investment: data.hasInvestment === "yes",
