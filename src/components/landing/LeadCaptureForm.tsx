@@ -14,7 +14,6 @@ import { Gift, Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  generateExternalId,
   trackFormView,
   trackFormStart,
   trackFormValidationError,
@@ -44,7 +43,6 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
   const [shouldPulse, setShouldPulse] = useState(false);
   const [formStarted, setFormStarted] = useState(false);
   const formSectionRef = useRef<HTMLElement>(null);
-  const leadExternalIdRef = useRef<string>(generateExternalId());
 
   useImperativeHandle(ref, () => ({
     triggerPulse: () => {
@@ -96,19 +94,15 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    const leadExternalId =
-      leadExternalIdRef.current || generateExternalId();
-    leadExternalIdRef.current = leadExternalId;
     
     try {
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
-      // Insert lead using client-generated ID to avoid waiting Supabase response
-      const { error } = await supabase
+      // Insert and get ID back (RLS allows SELECT for public)
+      const { data: insertedData, error } = await supabase
         .from('B2C_Leads_LP')
         .insert({
-          id: leadExternalId,
           name: data.name.trim(),
           surname: data.surname.trim(),
           email: data.email.trim().toLowerCase(),
@@ -118,7 +112,9 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           utm_source: urlParams.get('utm_source'),
           utm_medium: urlParams.get('utm_medium'),
           utm_campaign: urlParams.get('utm_campaign'),
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) {
         console.error("Supabase error details:", {
@@ -127,13 +123,9 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           hint: error.hint,
           code: error.code,
         });
-        
-        // Show detailed error only in development
-        if (import.meta.env.DEV) {
-          const errorMsg = `Erro: ${error.message} (código: ${error.code})`;
-          toast.error(errorMsg);
-        }
-        
+        // Show detailed error to user in dev
+        const errorMsg = `Erro: ${error.message} (código: ${error.code})`;
+        toast.error(errorMsg);
         throw new Error(error.message || "Erro ao salvar dados");
       }
 
@@ -144,7 +136,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           phone: data.phone,
           firstName: data.name.trim(),
           lastName: data.surname.trim(),
-          externalId: leadExternalId,
+          externalId: insertedData?.id || '', // Real Supabase UUID
         },
         {
           has_investment: data.hasInvestment === "yes",
@@ -152,14 +144,17 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         }
       );
       
-      // Success! Navigate to thank you page
-      // Wait for tracking to complete
-      setTimeout(() => {
-        navigate('/obrigado');
-      }, 500);
+      // Success! Show success message
+      toast.success("Recebido! Você receberá um WhatsApp em breve.", {
+        duration: 5000,
+      });
       
-      // Keep button disabled during navigation
-      // setIsSubmitting will stay true
+      // Wait for tracking to complete before navigating (if route exists)
+      // setTimeout(() => {
+      //   navigate('/obrigado');
+      // }, 500);
+      
+      setIsSubmitting(false);
     } catch (error) {
       console.error("Error submitting lead:", error);
       // Dismiss any existing toasts first

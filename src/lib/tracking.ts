@@ -99,18 +99,6 @@ function getContextData(): Record<string, any> {
   };
 }
 
-// Generate deterministic-looking external IDs on the client
-export function generateExternalId(prefix = 'lead'): string {
-  const hasRandomUUID =
-    typeof crypto !== 'undefined' &&
-    typeof crypto.randomUUID === 'function';
-  const id = hasRandomUUID
-    ? crypto.randomUUID()
-    : `${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
-
-  return `${prefix}_${id}`;
-}
-
 
 // Main tracking function
 export function trackEvent(
@@ -220,11 +208,11 @@ export function trackLeadCaptured(
 ): void {
   // Prepare user data
   const preparedUserData = prepareUserData(userData);
-
-  if (!preparedUserData.external_id && import.meta.env.DEV) {
-    console.warn(
-      '[tracking] trackLeadCaptured chamado sem external_id. Meta pode não deduplicar corretamente.'
-    );
+  
+  // Generate external_id if not provided (for Meta CAPI)
+  if (!preparedUserData.external_id && userData.email) {
+    // Create a deterministic ID based on email and timestamp
+    preparedUserData.external_id = `lead_${btoa(userData.email).substring(0, 20)}_${Date.now()}`;
   }
   
   trackEvent('Lead', {
