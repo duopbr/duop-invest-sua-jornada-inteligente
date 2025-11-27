@@ -95,12 +95,15 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     
+    // Gerar external_id no cliente para tracking (RLS não permite SELECT)
+    const externalId = crypto.randomUUID();
+    
     try {
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
-      // Insert and get ID back (RLS allows SELECT for public)
-      const { data: insertedData, error } = await supabase
+      // INSERT simples sem .select() - RLS só permite INSERT para anon
+      const { error } = await supabase
         .from('B2C_Leads_LP')
         .insert({
           name: data.name.trim(),
@@ -112,9 +115,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           utm_source: urlParams.get('utm_source'),
           utm_medium: urlParams.get('utm_medium'),
           utm_campaign: urlParams.get('utm_campaign'),
-        })
-        .select('id')
-        .single();
+        });
 
       if (error) {
         console.error("Supabase error details:", {
@@ -123,20 +124,17 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           hint: error.hint,
           code: error.code,
         });
-        // Show detailed error to user in dev
-        const errorMsg = `Erro: ${error.message} (código: ${error.code})`;
-        toast.error(errorMsg);
         throw new Error(error.message || "Erro ao salvar dados");
       }
 
-      // Track successful lead capture with normalized data for Meta CAPI
+      // Track successful lead capture with client-generated ID
       trackLeadCaptured(
         {
           email: data.email.trim().toLowerCase(),
           phone: data.phone,
           firstName: data.name.trim(),
           lastName: data.surname.trim(),
-          externalId: insertedData?.id || '', // Real Supabase UUID
+          externalId: externalId,
         },
         {
           has_investment: data.hasInvestment === "yes",
@@ -144,25 +142,16 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         }
       );
       
-      // Success! Show success message
-      toast.success("Recebido! Você receberá um WhatsApp em breve.", {
-        duration: 5000,
-      });
+      // Success! Navigate to thank you page
+      toast.success("Recebido! Você receberá um WhatsApp em breve.");
       
-      // Wait for tracking to complete before navigating (if route exists)
-      // setTimeout(() => {
-      //   navigate('/obrigado');
-      // }, 500);
+      setTimeout(() => {
+        navigate('/obrigado');
+      }, 500);
       
-      setIsSubmitting(false);
     } catch (error) {
       console.error("Error submitting lead:", error);
-      // Dismiss any existing toasts first
-      toast.dismiss();
-      // Show error toast
-      toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.", {
-        duration: 5000,
-      });
+      toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.");
       setIsSubmitting(false);
     }
   };
