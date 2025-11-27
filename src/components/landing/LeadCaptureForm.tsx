@@ -99,8 +99,8 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
-      // Fire and forget: insert without reading back (RLS blocks SELECT for anon)
-      const { error } = await supabase
+      // Insert and get ID back (RLS allows SELECT for public)
+      const { data: insertedData, error } = await supabase
         .from('B2C_Leads_LP')
         .insert({
           name: data.name.trim(),
@@ -112,7 +112,9 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           utm_source: urlParams.get('utm_source'),
           utm_medium: urlParams.get('utm_medium'),
           utm_campaign: urlParams.get('utm_campaign'),
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) {
         console.error("Supabase error details:", {
@@ -134,7 +136,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           phone: data.phone,
           firstName: data.name.trim(),
           lastName: data.surname.trim(),
-          // externalId will be auto-generated in trackLeadCaptured
+          externalId: insertedData?.id || '', // Real Supabase UUID
         },
         {
           has_investment: data.hasInvestment === "yes",
