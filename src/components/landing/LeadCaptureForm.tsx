@@ -123,9 +123,13 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           hint: error.hint,
           code: error.code,
         });
-        // Show detailed error to user in dev
-        const errorMsg = `Erro: ${error.message} (código: ${error.code})`;
-        toast.error(errorMsg);
+        
+        // Show detailed error only in development
+        if (import.meta.env.DEV) {
+          const errorMsg = `Erro: ${error.message} (código: ${error.code})`;
+          toast.error(errorMsg);
+        }
+        
         throw new Error(error.message || "Erro ao salvar dados");
       }
 
@@ -144,17 +148,10 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         }
       );
       
-      // Success! Show success message
-      toast.success("Recebido! Você receberá um WhatsApp em breve.", {
-        duration: 5000,
-      });
-      
-      // Wait for tracking to complete before navigating (if route exists)
-      // setTimeout(() => {
-      //   navigate('/obrigado');
-      // }, 500);
-      
-      setIsSubmitting(false);
+      // Success! Wait for tracking to complete before navigating
+      setTimeout(() => {
+        navigate('/obrigado');
+      }, 500);
     } catch (error) {
       console.error("Error submitting lead:", error);
       // Dismiss any existing toasts first
