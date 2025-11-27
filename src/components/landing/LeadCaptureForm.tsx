@@ -99,8 +99,8 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
-      // Fire and forget: insert without reading back (RLS blocks SELECT)
-      const { error } = await supabase
+      // Insert and get ID back (RLS allows SELECT for public)
+      const { data: insertedData, error } = await supabase
         .from('B2C_Leads_LP')
         .insert({
           name: data.name.trim(),
@@ -112,7 +112,9 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           utm_source: urlParams.get('utm_source'),
           utm_medium: urlParams.get('utm_medium'),
           utm_campaign: urlParams.get('utm_campaign'),
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) {
         console.error("Supabase error details:", {
@@ -121,13 +123,9 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           hint: error.hint,
           code: error.code,
         });
-        
-        // Show detailed error only in development
-        if (import.meta.env.DEV) {
-          const errorMsg = `Erro: ${error.message} (código: ${error.code})`;
-          toast.error(errorMsg);
-        }
-        
+        // Show detailed error to user in dev
+        const errorMsg = `Erro: ${error.message} (código: ${error.code})`;
+        toast.error(errorMsg);
         throw new Error(error.message || "Erro ao salvar dados");
       }
 
@@ -138,7 +136,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           phone: data.phone,
           firstName: data.name.trim(),
           lastName: data.surname.trim(),
-          // externalId will be auto-generated (fallback)
+          externalId: insertedData?.id || '', // Real Supabase UUID
         },
         {
           has_investment: data.hasInvestment === "yes",
@@ -146,10 +144,17 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         }
       );
       
-      // Success! Wait for tracking to complete before navigating
-      setTimeout(() => {
-        navigate('/obrigado');
-      }, 500);
+      // Success! Show success message
+      toast.success("Recebido! Você receberá um WhatsApp em breve.", {
+        duration: 5000,
+      });
+      
+      // Wait for tracking to complete before navigating (if route exists)
+      // setTimeout(() => {
+      //   navigate('/obrigado');
+      // }, 500);
+      
+      setIsSubmitting(false);
     } catch (error) {
       console.error("Error submitting lead:", error);
       // Dismiss any existing toasts first

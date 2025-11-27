@@ -209,12 +209,10 @@ export function trackLeadCaptured(
   // Prepare user data
   const preparedUserData = prepareUserData(userData);
   
-  // Fallback: Generate external_id if not provided (should always come from Supabase)
-  if (!preparedUserData.external_id) {
-    console.warn('⚠️ external_id not provided, generating fallback');
-    if (userData.email) {
-      preparedUserData.external_id = `lead_${btoa(userData.email).substring(0, 20)}_${Date.now()}`;
-    }
+  // Generate external_id if not provided (for Meta CAPI)
+  if (!preparedUserData.external_id && userData.email) {
+    // Create a deterministic ID based on email and timestamp
+    preparedUserData.external_id = `lead_${btoa(userData.email).substring(0, 20)}_${Date.now()}`;
   }
   
   trackEvent('Lead', {

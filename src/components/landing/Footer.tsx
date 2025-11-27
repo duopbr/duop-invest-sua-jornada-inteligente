@@ -51,10 +51,6 @@ export const Footer = () => {
               href="#"
               className="w-10 h-10 rounded-full bg-primary-foreground/10 hover:bg-accent flex items-center justify-center transition-all hover:scale-110"
               aria-label="LinkedIn"
-              onClick={(e) => {
-                e.preventDefault();
-                trackOutboundClick('#', 'linkedin');
-              }}
             >
               <Linkedin className="w-5 h-5" />
             </a>
