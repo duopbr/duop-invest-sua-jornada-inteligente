@@ -147,15 +147,12 @@ user_data: preparedUserData,  // Aninhado
 **Localização:** `ThankYou.tsx` linha 94
 
 ```typescript
-href="https://wa.me/5511999999999"  // ❌ Número fake
+href="https://wa.me/5521973973673"  // ✅ Número oficial
 ```
 
-**Problema:**
-- Número de telefone não é real
-- Usuário não consegue contatar
-
-**Solução:**
-- Substituir pelo número real do WhatsApp
+**Status:** ✅ **CORRIGIDO**
+- Link já aponta para o WhatsApp oficial
+- Usuários conseguem iniciar a conversa diretamente
 
 ---
 
