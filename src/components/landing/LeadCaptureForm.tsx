@@ -16,7 +16,6 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   trackFormView,
   trackFormStart,
-  trackFormSubmitAttempt,
   trackFormValidationError,
   trackLeadCaptured,
   trackOutboundClick,
@@ -97,9 +96,6 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
     setIsSubmitting(true);
     
     try {
-      // Track form submit attempt
-      trackFormSubmitAttempt('lead_capture_form');
-      
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
