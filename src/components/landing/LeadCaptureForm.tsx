@@ -128,14 +128,13 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
       }
 
       // Track successful lead capture with normalized data for Meta CAPI
-      // Note: no externalId since we can't read back the inserted row
       trackLeadCaptured(
         {
           email: data.email.trim().toLowerCase(),
           phone: data.phone,
           firstName: data.name.trim(),
           lastName: data.surname.trim(),
-          externalId: '', // Empty since we can't read back due to RLS
+          // externalId will be auto-generated in trackLeadCaptured
         },
         {
           has_investment: data.hasInvestment === "yes",
@@ -143,13 +142,17 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         }
       );
       
-      // Dismiss all toasts before navigating
-      toast.dismiss();
+      // Success! Show success message
+      toast.success("Recebido! Você receberá um WhatsApp em breve.", {
+        duration: 5000,
+      });
       
-      // Small delay to ensure toasts are cleared before navigation
-      setTimeout(() => {
-        navigate('/obrigado');
-      }, 100);
+      // Wait for tracking to complete before navigating (if route exists)
+      // setTimeout(() => {
+      //   navigate('/obrigado');
+      // }, 500);
+      
+      setIsSubmitting(false);
     } catch (error) {
       console.error("Error submitting lead:", error);
       // Dismiss any existing toasts first

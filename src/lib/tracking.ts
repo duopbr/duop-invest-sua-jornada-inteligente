@@ -190,17 +190,6 @@ export function trackCTAClick(location: string): void {
   });
 }
 
-export function trackFormSubmitAttempt(formId: string): void {
-  trackEvent('form_submit_attempt', {
-    eventCategory: 'conversion',
-    eventAction: 'form_submit_attempt',
-    eventLabel: formId,
-    customData: {
-      form_id: formId,
-    },
-  });
-}
-
 export function trackFormValidationError(errorFields: string[]): void {
   trackEvent('form_validation_error', {
     eventCategory: 'engagement',
@@ -217,15 +206,24 @@ export function trackLeadCaptured(
   userData: TrackingUserData,
   customData: TrackingCustomData = {}
 ): void {
-  // Prepare user data directly in the event (not nested)
+  // Prepare user data
   const preparedUserData = prepareUserData(userData);
+  
+  // Generate external_id if not provided (for Meta CAPI)
+  if (!preparedUserData.external_id && userData.email) {
+    // Create a deterministic ID based on email and timestamp
+    preparedUserData.external_id = `lead_${btoa(userData.email).substring(0, 20)}_${Date.now()}`;
+  }
   
   trackEvent('Lead', {
     eventCategory: 'conversion',
     eventAction: 'Lead',
     eventLabel: 'landing_page_form',
     eventValue: 1,
-    // Spread user data directly at root level for Meta CAPI
+    // Send user data in BOTH formats for maximum compatibility:
+    // 1. Nested format (Meta CAPI standard)
+    user_data: preparedUserData,
+    // 2. Root level (Google Enhanced Conversions & easier GTM mapping)
     ...preparedUserData,
     customData: {
       content_name: 'lead_form',
