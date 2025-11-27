@@ -44,6 +44,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
   const [shouldPulse, setShouldPulse] = useState(false);
   const [formStarted, setFormStarted] = useState(false);
   const formSectionRef = useRef<HTMLElement>(null);
+  const leadExternalIdRef = useRef<string>(generateExternalId());
 
   useImperativeHandle(ref, () => ({
     triggerPulse: () => {
@@ -95,44 +96,22 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-
-    const leadExternalId = generateExternalId();
-    const normalizedEmail = data.email.trim().toLowerCase();
-    const normalizedFirstName = data.name.trim();
-    const normalizedLastName = data.surname.trim();
-
-    const redirectToThankYou = () => {
-      setTimeout(() => {
-        navigate('/obrigado');
-      }, 500);
-    };
-
-    // Fire tracking immediately so Meta/GTM always receive the conversion
-    trackLeadCaptured(
-      {
-        email: normalizedEmail,
-        phone: data.phone,
-        firstName: normalizedFirstName,
-        lastName: normalizedLastName,
-        externalId: leadExternalId,
-      },
-      {
-        has_investment: data.hasInvestment === "yes",
-        form_id: 'lead_capture_form',
-      }
-    );
+    const leadExternalId =
+      leadExternalIdRef.current || generateExternalId();
+    leadExternalIdRef.current = leadExternalId;
     
     try {
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
+      // Insert lead using client-generated ID to avoid waiting Supabase response
       const { error } = await supabase
         .from('B2C_Leads_LP')
         .insert({
           id: leadExternalId,
-          name: normalizedFirstName,
-          surname: normalizedLastName,
-          email: normalizedEmail,
+          name: data.name.trim(),
+          surname: data.surname.trim(),
+          email: data.email.trim().toLowerCase(),
           phone: data.phone,
           has_investment: data.hasInvestment === "yes",
           source: 'landing_page',
@@ -142,25 +121,15 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         });
 
       if (error) {
-        const isPermissionError =
-          (error as { status?: number }).status === 401 ||
-          error.code === '42501';
-
-        if (isPermissionError) {
-          if (import.meta.env.DEV) {
-            console.warn('Supabase RLS permission error ao salvar lead', error);
-          }
-          redirectToThankYou();
-          return;
-        }
-
+        console.error("Supabase error details:", {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
+        
+        // Show detailed error only in development
         if (import.meta.env.DEV) {
-          console.error("Supabase error details:", {
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-            code: error.code,
-          });
           const errorMsg = `Erro: ${error.message} (código: ${error.code})`;
           toast.error(errorMsg);
         }
@@ -168,11 +137,34 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         throw new Error(error.message || "Erro ao salvar dados");
       }
 
-      redirectToThankYou();
+      // Track successful lead capture with normalized data for Meta CAPI
+      trackLeadCaptured(
+        {
+          email: data.email.trim().toLowerCase(),
+          phone: data.phone,
+          firstName: data.name.trim(),
+          lastName: data.surname.trim(),
+          externalId: leadExternalId,
+        },
+        {
+          has_investment: data.hasInvestment === "yes",
+          form_id: 'lead_capture_form',
+        }
+      );
+      
+      // Success! Navigate to thank you page
+      // Wait for tracking to complete
+      setTimeout(() => {
+        navigate('/obrigado');
+      }, 500);
+      
       // Keep button disabled during navigation
+      // setIsSubmitting will stay true
     } catch (error) {
       console.error("Error submitting lead:", error);
+      // Dismiss any existing toasts first
       toast.dismiss();
+      // Show error toast
       toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.", {
         duration: 5000,
       });

@@ -99,22 +99,16 @@ function getContextData(): Record<string, any> {
   };
 }
 
-// Generate UUID v4 (Meta/Supabase compatible) on the client
-export function generateExternalId(): string {
+// Generate deterministic-looking external IDs on the client
+export function generateExternalId(prefix = 'lead'): string {
   const hasRandomUUID =
     typeof crypto !== 'undefined' &&
     typeof crypto.randomUUID === 'function';
+  const id = hasRandomUUID
+    ? crypto.randomUUID()
+    : `${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
-  if (hasRandomUUID) {
-    return crypto.randomUUID();
-  }
-
-  // RFC4122 v4 fallback
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
-    const rand = (Math.random() * 16) | 0;
-    const value = char === 'x' ? rand : (rand & 0x3) | 0x8;
-    return value.toString(16);
-  });
+  return `${prefix}_${id}`;
 }
 
 
