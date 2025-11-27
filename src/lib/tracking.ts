@@ -99,6 +99,24 @@ function getContextData(): Record<string, any> {
   };
 }
 
+// Generate UUID v4 (Meta/Supabase compatible) on the client
+export function generateExternalId(): string {
+  const hasRandomUUID =
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function';
+
+  if (hasRandomUUID) {
+    return crypto.randomUUID();
+  }
+
+  // RFC4122 v4 fallback
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
+    const rand = (Math.random() * 16) | 0;
+    const value = char === 'x' ? rand : (rand & 0x3) | 0x8;
+    return value.toString(16);
+  });
+}
+
 
 // Main tracking function
 export function trackEvent(
@@ -208,11 +226,11 @@ export function trackLeadCaptured(
 ): void {
   // Prepare user data
   const preparedUserData = prepareUserData(userData);
-  
-  // Generate external_id if not provided (for Meta CAPI)
-  if (!preparedUserData.external_id && userData.email) {
-    // Create a deterministic ID based on email and timestamp
-    preparedUserData.external_id = `lead_${btoa(userData.email).substring(0, 20)}_${Date.now()}`;
+
+  if (!preparedUserData.external_id && import.meta.env.DEV) {
+    console.warn(
+      '[tracking] trackLeadCaptured chamado sem external_id. Meta pode não deduplicar corretamente.'
+    );
   }
   
   trackEvent('Lead', {
