@@ -53,21 +53,17 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
   );
 
   const imageContent = (
-    <picture>
-      <source
-        media="(max-width: 768px)"
-        srcSet={heroMobileImage}
-        type="image/webp"
-      />
-      <img
-        src={heroImage}
-        alt="Pessoa usando smartphone com gráficos de investimentos"
-        className="rounded-2xl shadow-elevated w-full"
-        width={1920}
-        height={1080}
-        fetchPriority="high"
-      />
-    </picture>
+    <img
+      src={heroImage}
+      srcSet={`${heroMobileImage} 800w, ${heroImage} 1920w`}
+      sizes="(max-width: 768px) 100vw, 50vw"
+      alt="Pessoa usando smartphone com gráficos de investimentos"
+      className="rounded-2xl shadow-elevated w-full h-auto"
+      width={1920}
+      height={1080}
+      fetchPriority="high"
+      decoding="async"
+    />
   );
 
   return (
