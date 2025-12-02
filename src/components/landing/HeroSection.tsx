@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-image.jpg";
+import heroMobileImage from "@/assets/hero-mobile.webp";
 import { trackCTAClick } from "@/lib/tracking";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -52,14 +53,21 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
   );
 
   const imageContent = (
-    <img
-      src={heroImage}
-      alt="Pessoa usando smartphone com gráficos de investimentos"
-      className="rounded-2xl shadow-elevated w-full"
-      width={1920}
-      height={1080}
-      fetchPriority="high"
-    />
+    <picture>
+      <source
+        media="(max-width: 768px)"
+        srcSet={heroMobileImage}
+        type="image/webp"
+      />
+      <img
+        src={heroImage}
+        alt="Pessoa usando smartphone com gráficos de investimentos"
+        className="rounded-2xl shadow-elevated w-full"
+        width={1920}
+        height={1080}
+        fetchPriority="high"
+      />
+    </picture>
   );
 
   return (
