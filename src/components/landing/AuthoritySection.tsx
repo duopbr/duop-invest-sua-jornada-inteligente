@@ -30,10 +30,10 @@ export const AuthoritySection = () => {
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-5xl font-bold text-primary mb-4">
@@ -46,10 +46,10 @@ export const AuthoritySection = () => {
 
         {/* Metrics */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.3 }}
           className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12"
         >
           <Card className="p-6 text-center bg-gradient-to-br from-accent/5 to-accent/10 border-accent/30 hover:border-accent/50 transition-all">
@@ -82,10 +82,10 @@ export const AuthoritySection = () => {
           {founders.map((founder, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.3 }}
             >
               <Card className="p-8 text-center h-full bg-gradient-to-br from-card to-muted/30 border-accent/20 hover:border-accent/50 transition-all hover:shadow-accent">
                 <div className="flex justify-center mb-6">
@@ -94,6 +94,8 @@ export const AuthoritySection = () => {
                     alt={`Foto de ${founder.name}, ${founder.credentials}`}
                     className="w-32 h-32 md:w-36 md:h-36 rounded-full object-contain bg-muted/20 border-2 border-accent/30 shadow-md hover:scale-105 transition-transform"
                     loading="lazy"
+                    width={144}
+                    height={144}
                   />
                 </div>
                 <h3 className="text-xl font-bold text-card-foreground mb-2">
