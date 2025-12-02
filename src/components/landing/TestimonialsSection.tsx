@@ -25,10 +25,10 @@ export const TestimonialsSection = () => {
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-5xl font-bold text-primary mb-4">
@@ -40,10 +40,10 @@ export const TestimonialsSection = () => {
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.3 }}
             >
               <Card className="p-8 h-full bg-card border-border hover:shadow-card transition-all relative">
                 <Quote className="w-10 h-10 text-accent/20 mb-4" />
@@ -64,10 +64,10 @@ export const TestimonialsSection = () => {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}
           className="flex justify-center"
         >
           <Card className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground border-none">
