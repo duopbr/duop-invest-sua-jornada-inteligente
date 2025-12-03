@@ -332,3 +332,5 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
 });
 
 LeadCaptureForm.displayName = "LeadCaptureForm";
+
+export default LeadCaptureForm;
