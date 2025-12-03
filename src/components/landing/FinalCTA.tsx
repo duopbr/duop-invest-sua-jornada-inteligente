@@ -40,3 +40,5 @@ export const FinalCTA = ({ onCTAClick }: FinalCTAProps) => {
     </section>
   );
 };
+
+export default FinalCTA;

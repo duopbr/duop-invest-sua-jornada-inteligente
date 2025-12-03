@@ -20,7 +20,7 @@ const problems = [
   },
 ];
 
-export const ProblemSection = () => {
+const ProblemSection = () => {
   return (
     <section className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
@@ -61,3 +61,5 @@ export const ProblemSection = () => {
     </section>
   );
 };
+
+export default ProblemSection;
