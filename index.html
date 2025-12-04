@@ -23,9 +23,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet"></noscript>
-    <!-- Preload responsivo: mobile primeiro -->
-    <link rel="preload" as="image" href="/src/assets/hero-mobile.webp" media="(max-width: 768px)" fetchpriority="high">
-    <link rel="preload" as="image" href="/src/assets/hero-image.jpg" media="(min-width: 769px)" fetchpriority="high">
+    
+    <!-- Critical CSS inline para evitar FOUC e acelerar FCP -->
+    <style>
+      html, body { margin: 0; padding: 0; }
+      #root { min-height: 100vh; background: hsl(210 40% 98%); }
+      @media (prefers-color-scheme: dark) { #root { background: hsl(222 47% 11%); } }
+    </style>
   </head>
 
   <body>
