@@ -1,4 +1,4 @@
-import { useRef, useEffect, lazy, Suspense } from "react";
+import { useRef, useEffect, useState, lazy, Suspense } from "react";
 import { Header } from "@/components/landing/Header";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { trackPageView } from "@/lib/tracking";
@@ -18,22 +18,39 @@ const Footer = lazy(() => import("@/components/landing/Footer"));
 const SectionFallback = () => <div className="py-20" />;
 
 const Index = () => {
+  const [shouldRenderBelowFold, setShouldRenderBelowFold] = useState(false);
   const formRef = useRef<{ triggerPulse: () => void }>(null);
 
-  // Track page view on mount
   useEffect(() => {
+    // NÃO ALTERAR tracking
     trackPageView();
+
+    const revealBelowFold = () => setShouldRenderBelowFold(true);
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(revealBelowFold);
+    } else {
+      setTimeout(revealBelowFold, 1000);
+    }
   }, []);
 
   const scrollToForm = () => {
-    const formElement = document.getElementById("form");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth" });
-      // Trigger pulse effect after scroll
-      setTimeout(() => {
-        formRef.current?.triggerPulse();
-      }, 600);
-    }
+    // Garante que o form será montado
+    setShouldRenderBelowFold(true);
+
+    const attemptScroll = () => {
+      const formElement = document.getElementById("form");
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: "smooth" });
+        setTimeout(() => {
+          formRef.current?.triggerPulse();
+        }, 600);
+      } else {
+        requestAnimationFrame(attemptScroll);
+      }
+    };
+
+    attemptScroll();
   };
 
   return (
@@ -42,18 +59,20 @@ const Index = () => {
       <Header onCTAClick={scrollToForm} />
       <HeroSection onCTAClick={scrollToForm} />
       
-      {/* Below-the-fold: loads on demand */}
-      <Suspense fallback={<SectionFallback />}>
-        <ProblemSection />
-        <SolutionSection />
-        <HowItWorksSection />
-        <TestimonialsSection />
-        <LeadCaptureForm ref={formRef} />
-        <AuthoritySection />
-        <FAQSection />
-        <FinalCTA onCTAClick={scrollToForm} />
-        <Footer />
-      </Suspense>
+      {/* Below-the-fold: loads on demand after idle */}
+      {shouldRenderBelowFold && (
+        <Suspense fallback={<SectionFallback />}>
+          <ProblemSection />
+          <SolutionSection />
+          <HowItWorksSection />
+          <TestimonialsSection />
+          <LeadCaptureForm ref={formRef} />
+          <AuthoritySection />
+          <FAQSection />
+          <FinalCTA onCTAClick={scrollToForm} />
+          <Footer />
+        </Suspense>
+      )}
     </div>
   );
 };

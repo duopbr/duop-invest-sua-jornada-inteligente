@@ -64,7 +64,7 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
                 width={1920}
                 height={1080}
                 fetchPriority="high"
-                decoding="sync"
+                decoding="async"
                 loading="eager"
               />
             </picture>
