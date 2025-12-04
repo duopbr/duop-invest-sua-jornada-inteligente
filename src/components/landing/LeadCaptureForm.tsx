@@ -102,10 +102,11 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
-      // INSERT simples sem .select() - RLS só permite INSERT para anon
+      // INSERT com ID gerado no cliente - mesmo ID vai para Meta e Supabase
       const { error } = await supabase
         .from('B2C_Leads_LP')
         .insert({
+          id: externalId, // Mesmo UUID enviado ao Meta para Offline Conversions
           name: data.name.trim(),
           surname: data.surname.trim(),
           email: data.email.trim().toLowerCase(),
@@ -331,3 +332,5 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
 });
 
 LeadCaptureForm.displayName = "LeadCaptureForm";
+
+export default LeadCaptureForm;

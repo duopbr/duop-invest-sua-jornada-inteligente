@@ -39,15 +39,15 @@ const faqs = [
   },
 ];
 
-export const FAQSection = () => {
+const FAQSection = () => {
   return (
     <section className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-5xl font-bold text-primary mb-4">
@@ -56,10 +56,10 @@ export const FAQSection = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}
           className="max-w-3xl mx-auto"
         >
           <Accordion type="single" collapsible className="space-y-4">
@@ -83,3 +83,5 @@ export const FAQSection = () => {
     </section>
   );
 };
+
+export default FAQSection;

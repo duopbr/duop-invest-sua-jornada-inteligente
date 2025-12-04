@@ -2,7 +2,7 @@ import { Instagram, Linkedin, Youtube } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { trackOutboundClick } from "@/lib/tracking";
 
-export const Footer = () => {
+const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground py-12">
       <div className="container mx-auto px-4">
@@ -67,3 +67,5 @@ export const Footer = () => {
     </footer>
   );
 };
+
+export default Footer;
