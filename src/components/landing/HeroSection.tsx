@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { trackCTAClick } from "@/lib/tracking";
 
-const heroImage = "/hero-image.jpg";
-const heroMobileImage = "/hero-mobile.webp";
+const heroImage = "/hero-image.webp";
 
 interface HeroSectionProps {
   onCTAClick: () => void;
