@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { trackCTAClick } from "@/lib/tracking";
 
@@ -12,13 +11,7 @@ export const FinalCTA = ({ onCTAClick }: FinalCTAProps) => {
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9nPjwvc3ZnPg==')] opacity-10" />
       
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto"
-        >
+        <div className="text-center max-w-3xl mx-auto animate-fade-in">
           <h2 className="text-4xl lg:text-5xl font-bold mb-6">
             Pare de Tomar Decisões no Escuro
           </h2>
@@ -35,7 +28,7 @@ export const FinalCTA = ({ onCTAClick }: FinalCTAProps) => {
           >
             Começar Gratuitamente
           </Button>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

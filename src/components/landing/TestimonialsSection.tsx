@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Quote, Award } from "lucide-react";
 
@@ -24,26 +23,18 @@ const TestimonialsSection = () => {
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.3 }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-3xl lg:text-5xl font-bold text-primary mb-4">
             Investidores Reais, Resultados Reais
           </h2>
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {testimonials.map((testimonial, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3 }}
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <Card className="p-8 h-full bg-card border-border hover:shadow-card transition-all relative">
                 <Quote className="w-10 h-10 text-accent/20 mb-4" />
@@ -59,24 +50,18 @@ const TestimonialsSection = () => {
                   </p>
                 </div>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.3 }}
-          className="flex justify-center"
-        >
+        <div className="flex justify-center animate-fade-in" style={{ animationDelay: '300ms' }}>
           <Card className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground border-none">
             <Award className="w-6 h-6" />
             <p className="font-semibold text-lg">
               Fundada por engenheiros ex-gestores com mestrado e doutorado em Economia (FGV)
             </p>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

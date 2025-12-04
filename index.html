@@ -17,12 +17,14 @@
     <meta name="twitter:site" content="@Duop" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
     
-    <!-- Preconnect para API e fontes -->
+    <!-- Preconnect para API -->
     <link rel="preconnect" href="https://server.analises.duop.com.br">
+    
+    <!-- Google Fonts: DM Sans (optimized loading) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
     
     <!-- Critical CSS inline para evitar FOUC e acelerar FCP -->
     <style>
@@ -35,9 +37,15 @@
     <link 
       rel="preload" 
       as="image" 
+      href="/hero-mobile.webp" 
+      media="(max-width: 768px)"
+      fetchpriority="high"
+    />
+    <link 
+      rel="preload" 
+      as="image" 
       href="/hero-image.jpg" 
-      imagesrcset="/hero-mobile.webp 800w, /hero-image.jpg 1920w"
-      imagesizes="(max-width: 768px) 100vw, 50vw"
+      media="(min-width: 769px)"
       fetchpriority="high"
     />
   </head>
