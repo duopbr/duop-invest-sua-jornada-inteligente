@@ -57,11 +57,6 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
                 media="(max-width: 768px)" 
                 type="image/webp"
               />
-              <source 
-                srcSet="/hero-image-mobile.webp" 
-                media="(max-width: 768px)" 
-                type="image/webp"
-              />
               <img
                 src={heroImage}
                 alt="Pessoa usando smartphone com gráficos de investimentos"
@@ -69,7 +64,7 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
                 width={1920}
                 height={1080}
                 fetchPriority="high"
-                decoding="async"
+                decoding="sync"
                 loading="eager"
               />
             </picture>
