@@ -68,7 +68,7 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
                 className="rounded-2xl shadow-elevated w-full h-auto"
                 width={1920}
                 height={1080}
-                fetchpriority="high"
+                fetchPriority="high"
                 decoding="async"
                 loading="eager"
               />
