@@ -30,6 +30,16 @@
       #root { min-height: 100vh; background: hsl(210 40% 98%); }
       @media (prefers-color-scheme: dark) { #root { background: hsl(222 47% 11%); } }
     </style>
+    
+    <!-- Otimização LCP: Preload da imagem Hero -->
+    <link 
+      rel="preload" 
+      as="image" 
+      href="/hero-image.jpg" 
+      imagesrcset="/hero-mobile.webp 800w, /hero-image.jpg 1920w"
+      imagesizes="(max-width: 768px) 100vw, 50vw"
+      fetchpriority="high"
+    />
   </head>
 
   <body>
