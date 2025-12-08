@@ -7,10 +7,10 @@ const SolutionSection = () => {
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-5xl font-bold text-primary mb-4">
@@ -22,10 +22,10 @@ const SolutionSection = () => {
           {solutions.map((solution, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
             >
               <Card className="p-8 h-full border-2 border-accent/20 hover:border-accent/50 transition-all bg-card hover:shadow-accent">
                 <div className="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">

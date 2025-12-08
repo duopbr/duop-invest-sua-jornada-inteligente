@@ -1,4 +1,4 @@
-import { useRef, useEffect, lazy, Suspense } from "react";
+import { useRef, useEffect, lazy, Suspense, useState, useCallback } from "react";
 import { Header } from "@/components/landing/Header";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { trackPageView } from "@/lib/tracking";
@@ -25,63 +25,88 @@ const SectionFallback = () => (
 
 const Index = () => {
   const formRef = useRef<LeadCaptureFormRef>(null);
+  const [shouldRenderBelowFold, setShouldRenderBelowFold] = useState(false);
 
-  // Track page view on mount
+  // Track page view on mount and defer below-fold rendering
   useEffect(() => {
     trackPageView();
+    
+    // Defer below-fold content until browser is idle
+    const scheduleRender = () => {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => setShouldRenderBelowFold(true), { timeout: 1000 });
+      } else {
+        setTimeout(() => setShouldRenderBelowFold(true), 1000);
+      }
+    };
+    
+    scheduleRender();
   }, []);
 
-  const scrollToForm = () => {
-    const formElement = document.getElementById("form");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth" });
-      // Trigger pulse effect after scroll
-      setTimeout(() => {
-        formRef.current?.triggerPulse();
-      }, SCROLL_TO_FORM_DELAY);
-    }
-  };
+  const scrollToForm = useCallback(() => {
+    // Ensure below-fold content is rendered before scrolling
+    setShouldRenderBelowFold(true);
+    
+    const tryScrollToForm = () => {
+      const formElement = document.getElementById("form");
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: "smooth" });
+        setTimeout(() => {
+          formRef.current?.triggerPulse();
+        }, SCROLL_TO_FORM_DELAY);
+      } else {
+        // Retry if form not yet rendered
+        requestAnimationFrame(tryScrollToForm);
+      }
+    };
+    
+    requestAnimationFrame(tryScrollToForm);
+  }, []);
 
   return (
     <div className="min-h-screen">
       <Header onCTAClick={scrollToForm} />
       <HeroSection onCTAClick={scrollToForm} />
       
-      <Suspense fallback={<SectionFallback />}>
-        <ProblemSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionFallback />}>
-        <SolutionSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionFallback />}>
-        <HowItWorksSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionFallback />}>
-        <TestimonialsSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionFallback />}>
-        <LeadCaptureForm ref={formRef} />
-      </Suspense>
-      
-      <Suspense fallback={<SectionFallback />}>
-        <AuthoritySection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionFallback />}>
-        <FAQSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionFallback />}>
-        <FinalCTA onCTAClick={scrollToForm} />
-      </Suspense>
-      
-      <Suspense fallback={<SectionFallback />}>
-        <Footer />
-      </Suspense>
+      {shouldRenderBelowFold && (
+        <>
+          <Suspense fallback={<SectionFallback />}>
+            <ProblemSection />
+          </Suspense>
+          
+          <Suspense fallback={<SectionFallback />}>
+            <SolutionSection />
+          </Suspense>
+          
+          <Suspense fallback={<SectionFallback />}>
+            <HowItWorksSection />
+          </Suspense>
+          
+          <Suspense fallback={<SectionFallback />}>
+            <TestimonialsSection />
+          </Suspense>
+          
+          <Suspense fallback={<SectionFallback />}>
+            <LeadCaptureForm ref={formRef} />
+          </Suspense>
+          
+          <Suspense fallback={<SectionFallback />}>
+            <AuthoritySection />
+          </Suspense>
+          
+          <Suspense fallback={<SectionFallback />}>
+            <FAQSection />
+          </Suspense>
+          
+          <Suspense fallback={<SectionFallback />}>
+            <FinalCTA onCTAClick={scrollToForm} />
+          </Suspense>
+          
+          <Suspense fallback={<SectionFallback />}>
+            <Footer />
+          </Suspense>
+        </>
+      )}
     </div>
   );
 };
