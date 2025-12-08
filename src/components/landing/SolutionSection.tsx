@@ -1,24 +1,6 @@
 import { motion } from "framer-motion";
-import { Shield, MessageSquare, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
-
-const solutions = [
-  {
-    icon: Shield,
-    title: "Análises Independentes",
-    description: "Não vendemos produtos, só a verdade",
-  },
-  {
-    icon: MessageSquare,
-    title: "Linguagem Simples",
-    description: "Explicamos tudo de forma clara",
-  },
-  {
-    icon: Users,
-    title: "24/7 no WhatsApp",
-    description: "Tire dúvidas quando precisar",
-  },
-];
+import { solutions } from "@/data/solutions";
 
 export const SolutionSection = () => {
   return (

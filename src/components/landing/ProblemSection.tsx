@@ -1,24 +1,6 @@
 import { motion } from "framer-motion";
-import { AlertCircle, DollarSign, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
-
-const problems = [
-  {
-    icon: AlertCircle,
-    title: "Produtos complexos que ninguém explica direito",
-    description: "Linguagem técnica e sem clareza sobre o que você está comprando",
-  },
-  {
-    icon: DollarSign,
-    title: "Taxas escondidas e conflitos de interesse",
-    description: "Seu gerente ganha comissão vendendo produtos que nem sempre são os melhores para você",
-  },
-  {
-    icon: Clock,
-    title: "Sem tempo para acompanhar seus investimentos",
-    description: "O mercado muda rápido e você não consegue ficar por dentro de tudo",
-  },
-];
+import { problems } from "@/data/problems";
 
 export const ProblemSection = () => {
   return (
