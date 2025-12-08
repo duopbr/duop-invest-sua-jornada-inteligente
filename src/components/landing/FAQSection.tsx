@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/accordion";
 import { faqs } from "@/data/faqs";
 
-export const FAQSection = () => {
+const FAQSection = () => {
   return (
     <section className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
@@ -51,3 +51,5 @@ export const FAQSection = () => {
     </section>
   );
 };
+
+export default FAQSection;

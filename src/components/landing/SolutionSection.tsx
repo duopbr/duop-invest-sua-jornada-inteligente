@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { solutions } from "@/data/solutions";
 
-export const SolutionSection = () => {
+const SolutionSection = () => {
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -45,3 +45,5 @@ export const SolutionSection = () => {
     </section>
   );
 };
+
+export default SolutionSection;

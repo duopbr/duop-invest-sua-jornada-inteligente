@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { founders } from "@/data/founders";
 
-export const AuthoritySection = () => {
+const AuthoritySection = () => {
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -70,6 +70,8 @@ export const AuthoritySection = () => {
                     src={founder.image}
                     alt={`Foto de ${founder.name}, ${founder.credentials}`}
                     className="w-32 h-32 md:w-36 md:h-36 rounded-full object-contain bg-muted/20 border-2 border-accent/30 shadow-md hover:scale-105 transition-transform"
+                    width={144}
+                    height={144}
                     loading="lazy"
                   />
                 </div>
@@ -90,3 +92,5 @@ export const AuthoritySection = () => {
     </section>
   );
 };
+
+export default AuthoritySection;

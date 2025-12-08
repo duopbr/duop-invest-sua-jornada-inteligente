@@ -33,6 +33,8 @@ export const Header = ({ onCTAClick }: CTAClickHandler) => {
               src={logo}
               alt="Duop - Consultoria de Investimentos"
               className="h-8 md:h-10"
+              width={120}
+              height={40}
             />
           </div>
 

@@ -33,7 +33,7 @@ import {
 
 export type { LeadCaptureFormRef };
 
-export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
+const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shouldPulse, setShouldPulse] = useState(false);
@@ -320,3 +320,5 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
 });
 
 LeadCaptureForm.displayName = "LeadCaptureForm";
+
+export default LeadCaptureForm;

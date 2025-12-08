@@ -72,7 +72,7 @@ const StepMockup = ({ type }: { type: StepMockupType }) => {
   );
 };
 
-export const HowItWorksSection = () => {
+const HowItWorksSection = () => {
   return (
     <section className="py-20 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4">
@@ -129,3 +129,5 @@ export const HowItWorksSection = () => {
     </section>
   );
 };
+
+export default HowItWorksSection;
