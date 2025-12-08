@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { trackPageView, trackOutboundClick } from "@/lib/tracking";
 import { Link } from "react-router-dom";
+import { SOCIAL_LINKS } from "@/constants/business";
 
 const ThankYou = () => {
   useEffect(() => {
@@ -68,11 +69,11 @@ const ThankYou = () => {
                 className="w-full bg-gradient-to-r from-[#E1306C] to-[#F77737] hover:opacity-90 text-white border-0"
               >
                 <a
-                  href="https://www.instagram.com/duop2opiniao/"
+                  href={SOCIAL_LINKS.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2"
-                  onClick={() => trackOutboundClick('https://www.instagram.com/duop2opiniao/', 'instagram')}
+                  onClick={() => trackOutboundClick(SOCIAL_LINKS.instagram, 'instagram')}
                 >
                   <Instagram className="w-5 h-5" />
                   Seguir @duop2opiniao
@@ -91,10 +92,10 @@ const ThankYou = () => {
                 className="w-full border-accent text-accent hover:bg-accent/10"
               >
                 <a
-                  href="https://wa.me/5511999999999"
+                  href={SOCIAL_LINKS.whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackOutboundClick('https://wa.me/5511999999999', 'whatsapp')}
+                  onClick={() => trackOutboundClick(SOCIAL_LINKS.whatsapp, 'whatsapp')}
                 >
                   Abrir WhatsApp
                 </a>

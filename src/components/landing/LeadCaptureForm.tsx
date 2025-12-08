@@ -13,7 +13,7 @@ import { Gift, Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { leadFormSchema, type LeadFormSchema } from "@/lib/validation/lead-form";
-import { getUTMParamsForInsert } from "@/lib/url";
+import { useUTMParamsForInsert } from "@/hooks/useUTMParams";
 import {
   trackFormView,
   trackFormStart,
@@ -22,6 +22,14 @@ import {
   trackLeadCaptured,
 } from "@/lib/tracking";
 import type { LeadCaptureFormRef } from "@/types/components";
+import {
+  PULSE_ANIMATION_DURATION,
+  NAVIGATE_DELAY,
+  TOAST_ERROR_DURATION,
+  FORM_VISIBILITY_THRESHOLD,
+  FORM_IDS,
+  LEAD_SOURCES,
+} from "@/constants/business";
 
 export type { LeadCaptureFormRef };
 
@@ -31,11 +39,12 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
   const [shouldPulse, setShouldPulse] = useState(false);
   const [formStarted, setFormStarted] = useState(false);
   const formSectionRef = useRef<HTMLElement>(null);
+  const utmParams = useUTMParamsForInsert();
 
   useImperativeHandle(ref, () => ({
     triggerPulse: () => {
       setShouldPulse(true);
-      setTimeout(() => setShouldPulse(false), 2000);
+      setTimeout(() => setShouldPulse(false), PULSE_ANIMATION_DURATION);
     },
   }));
 
@@ -45,12 +54,12 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            trackFormView("lead_capture_form");
+            trackFormView(FORM_IDS.leadCapture);
             observer.disconnect();
           }
         });
       },
-      { threshold: 0.3 }
+      { threshold: FORM_VISIBILITY_THRESHOLD }
     );
 
     if (formSectionRef.current) {
@@ -83,9 +92,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
     setIsSubmitting(true);
 
     try {
-      trackFormSubmitAttempt("lead_capture_form");
-
-      const utmParams = getUTMParamsForInsert();
+      trackFormSubmitAttempt(FORM_IDS.leadCapture);
 
       const { data: insertedData, error } = await supabase
         .from("B2C_Leads_LP")
@@ -95,7 +102,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
           email: data.email.trim().toLowerCase(),
           phone: data.phone,
           has_investment: data.hasInvestment === "yes",
-          source: "landing_page",
+          source: LEAD_SOURCES.landingPage,
           ...utmParams,
         })
         .select()
@@ -125,7 +132,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
         },
         {
           has_investment: data.hasInvestment === "yes",
-          form_id: "lead_capture_form",
+          form_id: FORM_IDS.leadCapture,
         }
       );
 
@@ -133,12 +140,12 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
 
       setTimeout(() => {
         navigate("/obrigado");
-      }, 100);
+      }, NAVIGATE_DELAY);
     } catch (error) {
       console.error("Error submitting lead:", error);
       toast.dismiss();
       toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.", {
-        duration: 5000,
+        duration: TOAST_ERROR_DURATION,
       });
       setIsSubmitting(false);
     }

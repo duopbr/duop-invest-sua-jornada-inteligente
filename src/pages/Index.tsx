@@ -11,6 +11,7 @@ import { AuthoritySection } from "@/components/landing/AuthoritySection";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { Footer } from "@/components/landing/Footer";
+import { SCROLL_TO_FORM_DELAY } from "@/constants/business";
 
 const Index = () => {
   const formRef = useRef<LeadCaptureFormRef>(null);
@@ -27,7 +28,7 @@ const Index = () => {
       // Trigger pulse effect after scroll
       setTimeout(() => {
         formRef.current?.triggerPulse();
-      }, 600);
+      }, SCROLL_TO_FORM_DELAY);
     }
   };
 

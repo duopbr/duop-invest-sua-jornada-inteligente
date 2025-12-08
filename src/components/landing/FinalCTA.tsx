@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { trackCTAClick } from "@/lib/tracking";
 import type { CTAClickHandler } from "@/types/components";
+import { CTA_LOCATIONS } from "@/constants/business";
 
 export const FinalCTA = ({ onCTAClick }: CTAClickHandler) => {
   return (
@@ -25,7 +26,7 @@ export const FinalCTA = ({ onCTAClick }: CTAClickHandler) => {
           <Button
             size="lg"
             onClick={() => {
-              trackCTAClick("final_cta");
+              trackCTAClick(CTA_LOCATIONS.finalCta);
               onCTAClick();
             }}
             className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-10 py-7 shadow-accent transition-all hover:scale-105"
