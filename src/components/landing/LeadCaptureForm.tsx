@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   trackFormView,
   trackFormStart,
+  trackFormSubmitAttempt,
   trackFormValidationError,
   trackLeadCaptured,
   trackOutboundClick,
@@ -95,18 +96,16 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     
-    // Gerar external_id no cliente para tracking (RLS não permite SELECT)
-    const externalId = crypto.randomUUID();
-    
     try {
+      // Track form submit attempt
+      trackFormSubmitAttempt('lead_capture_form');
+      
       // Capturar UTM params da URL
       const urlParams = new URLSearchParams(window.location.search);
       
-      // INSERT com ID gerado no cliente - mesmo ID vai para Meta e Supabase
-      const { error } = await supabase
+      const { data: insertedData, error } = await supabase
         .from('B2C_Leads_LP')
         .insert({
-          id: externalId, // Mesmo UUID enviado ao Meta para Offline Conversions
           name: data.name.trim(),
           surname: data.surname.trim(),
           email: data.email.trim().toLowerCase(),
@@ -116,7 +115,9 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
           utm_source: urlParams.get('utm_source'),
           utm_medium: urlParams.get('utm_medium'),
           utm_campaign: urlParams.get('utm_campaign'),
-        });
+        })
+        .select()
+        .single();
 
       if (error) {
         console.error("Supabase error details:", {
@@ -128,14 +129,18 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         throw new Error(error.message || "Erro ao salvar dados");
       }
 
-      // Track successful lead capture with client-generated ID
+      if (!insertedData) {
+        throw new Error("Nenhum dado foi retornado após inserção");
+      }
+
+      // Track successful lead capture with normalized data for Meta CAPI
       trackLeadCaptured(
         {
           email: data.email.trim().toLowerCase(),
           phone: data.phone,
           firstName: data.name.trim(),
           lastName: data.surname.trim(),
-          externalId: externalId,
+          externalId: insertedData.id,
         },
         {
           has_investment: data.hasInvestment === "yes",
@@ -143,16 +148,21 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         }
       );
       
-      // Success! Navigate to thank you page
-      toast.success("Recebido! Você receberá um WhatsApp em breve.");
+      // Dismiss all toasts before navigating
+      toast.dismiss();
       
+      // Small delay to ensure toasts are cleared before navigation
       setTimeout(() => {
         navigate('/obrigado');
-      }, 500);
-      
+      }, 100);
     } catch (error) {
       console.error("Error submitting lead:", error);
-      toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.");
+      // Dismiss any existing toasts first
+      toast.dismiss();
+      // Show error toast
+      toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.", {
+        duration: 5000,
+      });
       setIsSubmitting(false);
     }
   };
@@ -332,5 +342,3 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
 });
 
 LeadCaptureForm.displayName = "LeadCaptureForm";
-
-export default LeadCaptureForm;

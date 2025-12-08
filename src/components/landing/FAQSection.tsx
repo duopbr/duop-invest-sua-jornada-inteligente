@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import {
   Accordion,
   AccordionContent,
@@ -38,17 +39,29 @@ const faqs = [
   },
 ];
 
-const FAQSection = () => {
+export const FAQSection = () => {
   return (
     <section className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 animate-fade-in">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
           <h2 className="text-3xl lg:text-5xl font-bold text-primary mb-4">
             Perguntas Frequentes
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '100ms' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="max-w-3xl mx-auto"
+        >
           <Accordion type="single" collapsible className="space-y-4">
             {faqs.map((faq, index) => (
               <AccordionItem
@@ -65,10 +78,8 @@ const FAQSection = () => {
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 };
-
-export default FAQSection;

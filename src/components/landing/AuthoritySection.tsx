@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import philippeImage from "@/assets/philippe-drevon.png";
 import gustavoImage from "@/assets/gustavo-teixeira.png";
@@ -24,21 +25,33 @@ const founders = [
   },
 ];
 
-const AuthoritySection = () => {
+export const AuthoritySection = () => {
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 animate-fade-in">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
           <h2 className="text-3xl lg:text-5xl font-bold text-primary mb-4">
             Quem Está Por Trás da Duop?
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Fundada por engenheiros ex-gestores com mestrado e doutorado em Economia (FGV)
           </p>
-        </div>
+        </motion.div>
 
         {/* Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12 animate-fade-in" style={{ animationDelay: '100ms' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12"
+        >
           <Card className="p-6 text-center bg-gradient-to-br from-accent/5 to-accent/10 border-accent/30 hover:border-accent/50 transition-all">
             <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">
               R$ 47M+
@@ -63,14 +76,16 @@ const AuthoritySection = () => {
               avaliação média
             </p>
           </Card>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12">
           {founders.map((founder, index) => (
-            <div
+            <motion.div
               key={index}
-              className="animate-fade-in"
-              style={{ animationDelay: `${(index + 2) * 100}ms` }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Card className="p-8 text-center h-full bg-gradient-to-br from-card to-muted/30 border-accent/20 hover:border-accent/50 transition-all hover:shadow-accent">
                 <div className="flex justify-center mb-6">
@@ -79,8 +94,6 @@ const AuthoritySection = () => {
                     alt={`Foto de ${founder.name}, ${founder.credentials}`}
                     className="w-32 h-32 md:w-36 md:h-36 rounded-full object-contain bg-muted/20 border-2 border-accent/30 shadow-md hover:scale-105 transition-transform"
                     loading="lazy"
-                    width={144}
-                    height={144}
                   />
                 </div>
                 <h3 className="text-xl font-bold text-card-foreground mb-2">
@@ -93,12 +106,10 @@ const AuthoritySection = () => {
                   {founder.description}
                 </p>
               </Card>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
     </section>
   );
 };
-
-export default AuthoritySection;

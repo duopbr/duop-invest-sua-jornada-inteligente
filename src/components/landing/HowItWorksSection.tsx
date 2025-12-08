@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { Send, Sparkles, TrendingUp, Smartphone } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -25,15 +26,21 @@ const steps = [
   },
 ];
 
-const HowItWorksSection = () => {
+export const HowItWorksSection = () => {
   return (
     <section className="py-20 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16 animate-fade-in">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
           <h2 className="text-3xl lg:text-5xl font-bold text-primary mb-4">
             Como Funciona
           </h2>
-        </div>
+        </motion.div>
 
         <div className="relative max-w-5xl mx-auto">
           {/* Timeline line - hidden on mobile */}
@@ -41,12 +48,15 @@ const HowItWorksSection = () => {
 
           <div className="space-y-12 lg:space-y-24">
             {steps.map((step, index) => (
-              <div
+              <motion.div
                 key={index}
-                className={`flex flex-col lg:flex-row gap-8 items-center animate-fade-in ${
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className={`flex flex-col lg:flex-row gap-8 items-center ${
                   index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
                 }`}
-                style={{ animationDelay: `${index * 150}ms` }}
               >
                 <div className="flex-1 text-center lg:text-left">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent text-accent-foreground font-bold text-xl mb-4">
@@ -127,7 +137,7 @@ const HowItWorksSection = () => {
                 </div>
 
                 <div className="flex-1 hidden lg:block" />
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -135,5 +145,3 @@ const HowItWorksSection = () => {
     </section>
   );
 };
-
-export default HowItWorksSection;

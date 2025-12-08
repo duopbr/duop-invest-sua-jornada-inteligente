@@ -1,7 +1,7 @@
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import heroImage from "@/assets/hero-image.jpg";
 import { trackCTAClick } from "@/lib/tracking";
-
-const heroImage = "/hero-image.webp";
 
 interface HeroSectionProps {
   onCTAClick: () => void;
@@ -12,7 +12,12 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
     <section className="relative overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background py-20 lg:py-32">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="text-center lg:text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center lg:text-left"
+          >
             <h1 className="text-4xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
               Seu Gerente Quer Te Vender Produtos. Nós vamos fazer você Investir Melhor.
             </h1>
@@ -29,7 +34,12 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
             >
               Analisar Minha Carteira Grátis
             </Button>
-            <p className="mt-6 text-muted-foreground flex items-center justify-center lg:justify-start gap-2">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="mt-6 text-muted-foreground flex items-center justify-center lg:justify-start gap-2"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -47,28 +57,22 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
               <span>Junte-se a 2.400+ investidores que já testaram</span>
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
-          <div className="relative">
-            <picture>
-              <source 
-                srcSet="/hero-mobile.webp" 
-                media="(max-width: 768px)" 
-                type="image/webp"
-              />
-              <img
-                src={heroImage}
-                alt="Pessoa usando smartphone com gráficos de investimentos"
-                className="rounded-2xl shadow-elevated w-full h-auto"
-                width={1920}
-                height={1080}
-                fetchPriority="high"
-                decoding="async"
-                loading="eager"
-              />
-            </picture>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="relative"
+          >
+            <img
+              src={heroImage}
+              alt="Pessoa usando smartphone com gráficos de investimentos"
+              className="rounded-2xl shadow-elevated w-full"
+              loading="lazy"
+            />
+          </motion.div>
         </div>
       </div>
     </section>

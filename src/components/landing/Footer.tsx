@@ -2,7 +2,7 @@ import { Instagram, Linkedin, Youtube } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { trackOutboundClick } from "@/lib/tracking";
 
-const Footer = () => {
+export const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground py-12">
       <div className="container mx-auto px-4">
@@ -48,12 +48,9 @@ const Footer = () => {
               <Youtube className="w-5 h-5" />
             </a>
             <a
-              href="https://www.linkedin.com/company/duop"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#"
               className="w-10 h-10 rounded-full bg-primary-foreground/10 hover:bg-accent flex items-center justify-center transition-all hover:scale-110"
               aria-label="LinkedIn"
-              onClick={() => trackOutboundClick('https://www.linkedin.com/company/duop', 'linkedin')}
             >
               <Linkedin className="w-5 h-5" />
             </a>
@@ -67,5 +64,3 @@ const Footer = () => {
     </footer>
   );
 };
-
-export default Footer;

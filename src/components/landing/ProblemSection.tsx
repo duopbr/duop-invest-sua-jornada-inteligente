@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { AlertCircle, DollarSign, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -19,19 +20,31 @@ const problems = [
   },
 ];
 
-const ProblemSection = () => {
+export const ProblemSection = () => {
   return (
     <section className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 animate-fade-in">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
           <h2 className="text-3xl lg:text-5xl font-bold text-primary mb-4">
             Cansado de Recomendações Enviesadas do Seu Banco?
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {problems.map((problem, index) => (
-            <div key={index} className="animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
               <Card className="p-8 h-full hover:shadow-card transition-all bg-card border-border">
                 <problem.icon className="w-12 h-12 text-accent mb-4" />
                 <h3 className="text-xl font-semibold text-card-foreground mb-3">
@@ -41,12 +54,10 @@ const ProblemSection = () => {
                   {problem.description}
                 </p>
               </Card>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
     </section>
   );
 };
-
-export default ProblemSection;

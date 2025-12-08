@@ -91,10 +91,10 @@ const ThankYou = () => {
                 className="w-full border-accent text-accent hover:bg-accent/10"
               >
                 <a
-                  href="https://wa.me/5521973973673"
+                  href="https://wa.me/5511999999999"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackOutboundClick('https://wa.me/5521973973673', 'whatsapp')}
+                  onClick={() => trackOutboundClick('https://wa.me/5511999999999', 'whatsapp')}
                 >
                   Abrir WhatsApp
                 </a>

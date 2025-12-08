@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.webp";
+import logo from "@/assets/logo.png";
 import { trackCTAClick } from "@/lib/tracking";
 
 interface HeaderProps {
@@ -31,12 +31,10 @@ export const Header = ({ onCTAClick }: HeaderProps) => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-          <img
+            <img
               src={logo}
               alt="Duop - Consultoria de Investimentos"
               className="h-8 md:h-10"
-              width={170}
-              height={56}
             />
           </div>
 
