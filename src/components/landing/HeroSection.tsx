@@ -2,12 +2,9 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-image.jpg";
 import { trackCTAClick } from "@/lib/tracking";
+import type { CTAClickHandler } from "@/types/components";
 
-interface HeroSectionProps {
-  onCTAClick: () => void;
-}
-
-export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
+export const HeroSection = ({ onCTAClick }: CTAClickHandler) => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background py-20 lg:py-32">
       <div className="container mx-auto px-4">
@@ -27,7 +24,7 @@ export const HeroSection = ({ onCTAClick }: HeroSectionProps) => {
             <Button
               size="lg"
               onClick={() => {
-                trackCTAClick('hero');
+                trackCTAClick("hero");
                 onCTAClick();
               }}
               className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-8 py-6 shadow-accent transition-all hover:scale-105"
