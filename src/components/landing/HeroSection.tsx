@@ -68,7 +68,11 @@ export const HeroSection = ({ onCTAClick }: CTAClickHandler) => {
               src={heroImage}
               alt="Pessoa usando smartphone com gráficos de investimentos"
               className="rounded-2xl shadow-elevated w-full"
-              loading="lazy"
+              width={800}
+              height={600}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
             />
           </motion.div>
         </div>

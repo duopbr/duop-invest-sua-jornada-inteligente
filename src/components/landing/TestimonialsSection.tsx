@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Quote, Award } from "lucide-react";
 import { testimonials } from "@/data/testimonials";
 
-export const TestimonialsSection = () => {
+const TestimonialsSection = () => {
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -64,3 +64,5 @@ export const TestimonialsSection = () => {
     </section>
   );
 };
+
+export default TestimonialsSection;

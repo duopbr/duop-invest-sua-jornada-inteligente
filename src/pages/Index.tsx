@@ -1,17 +1,27 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, lazy, Suspense } from "react";
 import { Header } from "@/components/landing/Header";
-import { trackPageView } from "@/lib/tracking";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { ProblemSection } from "@/components/landing/ProblemSection";
-import { SolutionSection } from "@/components/landing/SolutionSection";
-import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
-import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
-import { LeadCaptureForm, LeadCaptureFormRef } from "@/components/landing/LeadCaptureForm";
-import { AuthoritySection } from "@/components/landing/AuthoritySection";
-import { FAQSection } from "@/components/landing/FAQSection";
-import { FinalCTA } from "@/components/landing/FinalCTA";
-import { Footer } from "@/components/landing/Footer";
+import { trackPageView } from "@/lib/tracking";
 import { SCROLL_TO_FORM_DELAY } from "@/constants/business";
+import type { LeadCaptureFormRef } from "@/types/components";
+
+// Lazy load below-the-fold components
+const ProblemSection = lazy(() => import("@/components/landing/ProblemSection"));
+const SolutionSection = lazy(() => import("@/components/landing/SolutionSection"));
+const HowItWorksSection = lazy(() => import("@/components/landing/HowItWorksSection"));
+const TestimonialsSection = lazy(() => import("@/components/landing/TestimonialsSection"));
+const LeadCaptureForm = lazy(() => import("@/components/landing/LeadCaptureForm"));
+const AuthoritySection = lazy(() => import("@/components/landing/AuthoritySection"));
+const FAQSection = lazy(() => import("@/components/landing/FAQSection"));
+const FinalCTA = lazy(() => import("@/components/landing/FinalCTA"));
+const Footer = lazy(() => import("@/components/landing/Footer"));
+
+// Minimal loading fallback
+const SectionFallback = () => (
+  <div className="py-20 flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 const Index = () => {
   const formRef = useRef<LeadCaptureFormRef>(null);
@@ -36,15 +46,42 @@ const Index = () => {
     <div className="min-h-screen">
       <Header onCTAClick={scrollToForm} />
       <HeroSection onCTAClick={scrollToForm} />
-      <ProblemSection />
-      <SolutionSection />
-      <HowItWorksSection />
-      <TestimonialsSection />
-      <LeadCaptureForm ref={formRef} />
-      <AuthoritySection />
-      <FAQSection />
-      <FinalCTA onCTAClick={scrollToForm} />
-      <Footer />
+      
+      <Suspense fallback={<SectionFallback />}>
+        <ProblemSection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionFallback />}>
+        <SolutionSection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionFallback />}>
+        <HowItWorksSection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionFallback />}>
+        <TestimonialsSection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionFallback />}>
+        <LeadCaptureForm ref={formRef} />
+      </Suspense>
+      
+      <Suspense fallback={<SectionFallback />}>
+        <AuthoritySection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionFallback />}>
+        <FAQSection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionFallback />}>
+        <FinalCTA onCTAClick={scrollToForm} />
+      </Suspense>
+      
+      <Suspense fallback={<SectionFallback />}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };

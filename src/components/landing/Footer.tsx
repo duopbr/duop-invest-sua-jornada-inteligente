@@ -3,13 +3,19 @@ import logo from "@/assets/logo.png";
 import { trackOutboundClick } from "@/lib/tracking";
 import { SOCIAL_LINKS } from "@/constants/business";
 
-export const Footer = () => {
+const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground py-12">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
-            <img src={logo} alt="Duop" className="h-12 mb-2 mx-auto md:mx-0" />
+            <img
+              src={logo}
+              alt="Duop"
+              className="h-12 mb-2 mx-auto md:mx-0"
+              width={144}
+              height={48}
+            />
             <p className="text-sm opacity-80">
               Consultoria de investimentos inteligente
             </p>
@@ -65,3 +71,5 @@ export const Footer = () => {
     </footer>
   );
 };
+
+export default Footer;
