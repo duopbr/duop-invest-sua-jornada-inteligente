@@ -1,7 +1,6 @@
 import { forwardRef, useImperativeHandle, useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { motion } from "framer-motion";
 import InputMask from "react-input-mask";
 import { useNavigate } from "react-router-dom";
@@ -13,32 +12,20 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Gift, Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { leadFormSchema, type LeadFormSchema } from "@/lib/validation/lead-form";
+import { getUTMParamsForInsert } from "@/lib/url";
 import {
   trackFormView,
   trackFormStart,
   trackFormSubmitAttempt,
   trackFormValidationError,
   trackLeadCaptured,
-  trackOutboundClick,
 } from "@/lib/tracking";
+import type { LeadCaptureFormRef } from "@/types/components";
 
-const formSchema = z.object({
-  name: z.string().trim().min(1, { message: "Por favor, insira seu nome" }),
-  surname: z.string().trim().min(1, { message: "Por favor, insira seu sobrenome" }),
-  email: z.string().trim().email({ message: "E-mail inválido" }),
-  phone: z.string().regex(/^\(\d{2}\) \d{5}-\d{4}$/, { message: "Telefone inválido" }),
-  hasInvestment: z.enum(["yes", "no"], {
-    required_error: "Por favor, selecione uma opção",
-  }),
-});
+export type { LeadCaptureFormRef };
 
-type FormData = z.infer<typeof formSchema>;
-
-export interface LeadCaptureFormRef {
-  triggerPulse: () => void;
-}
-
-export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
+export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((_, ref) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shouldPulse, setShouldPulse] = useState(false);
@@ -58,7 +45,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            trackFormView('lead_capture_form');
+            trackFormView("lead_capture_form");
             observer.disconnect();
           }
         });
@@ -73,7 +60,6 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
     return () => observer.disconnect();
   }, []);
 
-  // Track form start on first field interaction
   const handleFormStart = (fieldName: string) => {
     if (!formStarted) {
       setFormStarted(true);
@@ -87,34 +73,30 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
     formState: { errors },
     setValue,
     watch,
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  } = useForm<LeadFormSchema>({
+    resolver: zodResolver(leadFormSchema),
   });
 
   const hasInvestment = watch("hasInvestment");
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: LeadFormSchema) => {
     setIsSubmitting(true);
-    
+
     try {
-      // Track form submit attempt
-      trackFormSubmitAttempt('lead_capture_form');
-      
-      // Capturar UTM params da URL
-      const urlParams = new URLSearchParams(window.location.search);
-      
+      trackFormSubmitAttempt("lead_capture_form");
+
+      const utmParams = getUTMParamsForInsert();
+
       const { data: insertedData, error } = await supabase
-        .from('B2C_Leads_LP')
+        .from("B2C_Leads_LP")
         .insert({
           name: data.name.trim(),
           surname: data.surname.trim(),
           email: data.email.trim().toLowerCase(),
           phone: data.phone,
           has_investment: data.hasInvestment === "yes",
-          source: 'landing_page',
-          utm_source: urlParams.get('utm_source'),
-          utm_medium: urlParams.get('utm_medium'),
-          utm_campaign: urlParams.get('utm_campaign'),
+          source: "landing_page",
+          ...utmParams,
         })
         .select()
         .single();
@@ -133,7 +115,6 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         throw new Error("Nenhum dado foi retornado após inserção");
       }
 
-      // Track successful lead capture with normalized data for Meta CAPI
       trackLeadCaptured(
         {
           email: data.email.trim().toLowerCase(),
@@ -144,22 +125,18 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
         },
         {
           has_investment: data.hasInvestment === "yes",
-          form_id: 'lead_capture_form',
+          form_id: "lead_capture_form",
         }
       );
-      
-      // Dismiss all toasts before navigating
+
       toast.dismiss();
-      
-      // Small delay to ensure toasts are cleared before navigation
+
       setTimeout(() => {
-        navigate('/obrigado');
+        navigate("/obrigado");
       }, 100);
     } catch (error) {
       console.error("Error submitting lead:", error);
-      // Dismiss any existing toasts first
       toast.dismiss();
-      // Show error toast
       toast.error("Algo deu errado. Tente novamente ou nos chame no WhatsApp.", {
         duration: 5000,
       });
@@ -167,8 +144,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
     }
   };
 
-  // Track validation errors
-  const handleFormError = (formErrors: any) => {
+  const handleFormError = (formErrors: Record<string, unknown>) => {
     const errorFields = Object.keys(formErrors);
     if (errorFields.length > 0) {
       trackFormValidationError(errorFields);
@@ -176,11 +152,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
   };
 
   return (
-    <section
-      id="form"
-      ref={formSectionRef}
-      className="py-20 bg-muted/50"
-    >
+    <section id="form" ref={formSectionRef} className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -202,9 +174,11 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
             </span>
           </motion.div>
 
-          <Card className={`p-8 lg:p-12 shadow-elevated border-2 bg-card transition-all duration-500 ${
-            shouldPulse ? "border-accent animate-pulse-glow" : "border-accent/20"
-          }`}>
+          <Card
+            className={`p-8 lg:p-12 shadow-elevated border-2 bg-card transition-all duration-500 ${
+              shouldPulse ? "border-accent animate-pulse-glow" : "border-accent/20"
+            }`}
+          >
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full mb-4">
                 <Gift className="w-5 h-5" />
@@ -226,7 +200,7 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
                     id="name"
                     placeholder="Seu nome"
                     {...register("name")}
-                    onFocus={() => handleFormStart('name')}
+                    onFocus={() => handleFormStart("name")}
                     className={errors.name ? "border-destructive" : ""}
                   />
                   {errors.name && (
@@ -264,11 +238,8 @@ export const LeadCaptureForm = forwardRef<LeadCaptureFormRef>((props, ref) => {
 
               <div className="space-y-2">
                 <Label htmlFor="phone">Telefone *</Label>
-                <InputMask
-                  mask="(99) 99999-9999"
-                  {...register("phone")}
-                >
-                  {(inputProps: any) => (
+                <InputMask mask="(99) 99999-9999" {...register("phone")}>
+                  {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
                     <Input
                       {...inputProps}
                       id="phone"

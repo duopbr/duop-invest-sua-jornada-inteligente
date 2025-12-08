@@ -2,12 +2,9 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { trackCTAClick } from "@/lib/tracking";
+import type { CTAClickHandler } from "@/types/components";
 
-interface HeaderProps {
-  onCTAClick: () => void;
-}
-
-export const Header = ({ onCTAClick }: HeaderProps) => {
+export const Header = ({ onCTAClick }: CTAClickHandler) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -41,7 +38,7 @@ export const Header = ({ onCTAClick }: HeaderProps) => {
           {/* CTA Button */}
           <Button
             onClick={() => {
-              trackCTAClick('header');
+              trackCTAClick("header");
               onCTAClick();
             }}
             size="lg"
