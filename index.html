@@ -24,8 +24,8 @@
     <link rel="preconnect" href="https://nlfpajonnkbgccaptayl.supabase.co">
     <link rel="preconnect" href="https://server.analises.duop.com.br">
     
-    <!-- Critical hero image preload -->
-    <link rel="preload" as="image" href="/hero-image.jpg" fetchpriority="high" />
+    <!-- Critical hero image preload with responsive srcset -->
+    <link rel="preload" as="image" href="/hero-image.webp" imagesrcset="/hero-mobile.webp 800w, /hero-image.webp 1920w" imagesizes="(max-width: 768px) 100vw, 50vw" fetchpriority="high" />
     
     <!-- Async Google Fonts loading - only essential weights -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap">

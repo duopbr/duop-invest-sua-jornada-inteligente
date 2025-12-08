@@ -5,8 +5,9 @@ import type { CTAClickHandler } from "@/types/components";
 import { CTA_LOCATIONS } from "@/constants/business";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Static path for preload optimization
-const heroImage = "/hero-image.jpg";
+// Static paths for preload optimization
+const heroImage = "/hero-image.webp";
+const heroMobileImage = "/hero-mobile.webp";
 
 export const HeroSection = ({ onCTAClick }: CTAClickHandler) => {
   const isMobile = useIsMobile();
@@ -55,10 +56,12 @@ export const HeroSection = ({ onCTAClick }: CTAClickHandler) => {
     <div className="relative">
       <img
         src={heroImage}
+        srcSet={`${heroMobileImage} 800w, ${heroImage} 1920w`}
+        sizes="(max-width: 768px) 100vw, 50vw"
         alt="Pessoa usando smartphone com gráficos de investimentos"
         className="rounded-2xl shadow-elevated w-full"
-        width={800}
-        height={600}
+        width={1920}
+        height={1080}
         loading="eager"
         fetchPriority="high"
         decoding="async"
@@ -140,10 +143,12 @@ export const HeroSection = ({ onCTAClick }: CTAClickHandler) => {
           >
             <img
               src={heroImage}
+              srcSet={`${heroMobileImage} 800w, ${heroImage} 1920w`}
+              sizes="(max-width: 768px) 100vw, 50vw"
               alt="Pessoa usando smartphone com gráficos de investimentos"
               className="rounded-2xl shadow-elevated w-full"
-              width={800}
-              height={600}
+              width={1920}
+              height={1080}
               loading="eager"
               fetchPriority="high"
               decoding="async"
