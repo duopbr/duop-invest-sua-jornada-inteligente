@@ -11,10 +11,10 @@ const FinalCTA = ({ onCTAClick }: CTAClickHandler) => {
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}
           className="text-center max-w-3xl mx-auto"
         >
           <h2 className="text-4xl lg:text-5xl font-bold mb-6">
