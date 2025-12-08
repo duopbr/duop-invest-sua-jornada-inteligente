@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { trackCTAClick } from "@/lib/tracking";
 import type { CTAClickHandler } from "@/types/components";
+import { HEADER_SCROLL_THRESHOLD, CTA_LOCATIONS } from "@/constants/business";
 
 export const Header = ({ onCTAClick }: CTAClickHandler) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > HEADER_SCROLL_THRESHOLD);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -38,7 +39,7 @@ export const Header = ({ onCTAClick }: CTAClickHandler) => {
           {/* CTA Button */}
           <Button
             onClick={() => {
-              trackCTAClick("header");
+              trackCTAClick(CTA_LOCATIONS.header);
               onCTAClick();
             }}
             size="lg"
