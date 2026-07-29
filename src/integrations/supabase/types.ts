@@ -18,12 +18,13 @@ export type Database = {
         Row: {
           Assessoria: string | null
           celular: string
-          Contatado: string | null
           created_at: string | null
           email: string | null
           id: number
           nome: string
+          "Quantos Contatos": string | null
           reunião_marcada: string | null
+          tipo_profissional: string | null
           utm_medium: string | null
           utm_source: string | null
           Venda: string | null
@@ -31,12 +32,13 @@ export type Database = {
         Insert: {
           Assessoria?: string | null
           celular: string
-          Contatado?: string | null
           created_at?: string | null
           email?: string | null
           id?: number
           nome: string
+          "Quantos Contatos"?: string | null
           reunião_marcada?: string | null
+          tipo_profissional?: string | null
           utm_medium?: string | null
           utm_source?: string | null
           Venda?: string | null
@@ -44,12 +46,13 @@ export type Database = {
         Update: {
           Assessoria?: string | null
           celular?: string
-          Contatado?: string | null
           created_at?: string | null
           email?: string | null
           id?: number
           nome?: string
+          "Quantos Contatos"?: string | null
           reunião_marcada?: string | null
+          tipo_profissional?: string | null
           utm_medium?: string | null
           utm_source?: string | null
           Venda?: string | null
@@ -89,6 +92,42 @@ export type Database = {
         }
         Relationships: []
       }
+      B2B: {
+        Row: {
+          Cargo: string | null
+          created_at: string
+          Email: string | null
+          Escritório: string | null
+          id: number
+          Nome: string | null
+          Reunião: string | null
+          telefone: string | null
+          Vendas: boolean | null
+        }
+        Insert: {
+          Cargo?: string | null
+          created_at?: string
+          Email?: string | null
+          Escritório?: string | null
+          id?: number
+          Nome?: string | null
+          Reunião?: string | null
+          telefone?: string | null
+          Vendas?: boolean | null
+        }
+        Update: {
+          Cargo?: string | null
+          created_at?: string
+          Email?: string | null
+          Escritório?: string | null
+          id?: number
+          Nome?: string | null
+          Reunião?: string | null
+          telefone?: string | null
+          Vendas?: boolean | null
+        }
+        Relationships: []
+      }
       B2C: {
         Row: {
           "Análise de Carteira": string | null
@@ -125,51 +164,6 @@ export type Database = {
         }
         Relationships: []
       }
-      B2C_Leads_LP: {
-        Row: {
-          created_at: string | null
-          email: string
-          has_investment: boolean
-          id: string
-          name: string
-          phone: string
-          source: string | null
-          surname: string
-          updated_at: string | null
-          utm_campaign: string | null
-          utm_medium: string | null
-          utm_source: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          has_investment: boolean
-          id?: string
-          name: string
-          phone: string
-          source?: string | null
-          surname: string
-          updated_at?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          has_investment?: boolean
-          id?: string
-          name?: string
-          phone?: string
-          source?: string | null
-          surname?: string
-          updated_at?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Relationships: []
-      }
       Calculadoras: {
         Row: {
           calculadora: string | null
@@ -184,6 +178,7 @@ export type Database = {
           Nota: string | null
           "Numero de Conversas": string | null
           patrimonio: string | null
+          perfil: string | null
           phone: string | null
           "Se sentiu enganado": string | null
           valor_mes: string | null
@@ -201,6 +196,7 @@ export type Database = {
           Nota?: string | null
           "Numero de Conversas"?: string | null
           patrimonio?: string | null
+          perfil?: string | null
           phone?: string | null
           "Se sentiu enganado"?: string | null
           valor_mes?: string | null
@@ -218,6 +214,7 @@ export type Database = {
           Nota?: string | null
           "Numero de Conversas"?: string | null
           patrimonio?: string | null
+          perfil?: string | null
           phone?: string | null
           "Se sentiu enganado"?: string | null
           valor_mes?: string | null
@@ -257,18 +254,54 @@ export type Database = {
         }
         Relationships: []
       }
-      LP_Vendas: {
+      leads: {
         Row: {
+          aum_range: string | null
+          company_size: string | null
           created_at: string
-          id: number
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          segment: string | null
+          source_url: string | null
+          status: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
         }
         Insert: {
+          aum_range?: string | null
+          company_size?: string | null
           created_at?: string
-          id?: number
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          segment?: string | null
+          source_url?: string | null
+          status?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
         }
         Update: {
+          aum_range?: string | null
+          company_size?: string | null
           created_at?: string
-          id?: number
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          segment?: string | null
+          source_url?: string | null
+          status?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
         }
         Relationships: []
       }
@@ -314,15 +347,43 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -449,6 +510,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
